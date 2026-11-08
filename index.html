@@ -1,0 +1,2372 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MOKA Point of Sale - demo acount</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    color: #333;
+    background: #ffffff;
+    overflow: hidden;
+  }
+  a { text-decoration: none; color: inherit; }
+  details > summary { list-style: none; }
+  details > summary::-webkit-details-marker { display: none; }
+
+  .app-layout {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  /* LEFT SIDEBAR */
+  .sidebar {
+    width: 220px;
+    background-color: #1d2c3a;
+    color: #c5ced6;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    height: 100vh;
+    user-select: none;
+  }
+  .sidebar-brand {
+    height: 76px;
+    display: flex;
+    align-items: center;
+    padding: 0 28px;
+    border-bottom: 1px solid #16222d;
+    flex-shrink: 0;
+  }
+  .moka-logo { height: 26px; width: auto; display: block; }
+
+  /* ACCOUNT DROPDOWN */
+  .account-details {
+    border-bottom: 1px solid #16222d;
+    flex-shrink: 0;
+  }
+  .sidebar-account {
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 22px;
+    color: #cfd7df;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .sidebar-account:hover { background-color: #223344; }
+  .account-card {
+    background-color: #16222d;
+    padding: 14px 20px;
+    font-size: 12px;
+    color: #c5ced6;
+    border-top: 1px solid #223344;
+  }
+  .account-card-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .account-ava {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #2574a9;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .account-card b { color: #fff; font-size: 13px; display: block; }
+  .account-card small { color: #9aa8b6; font-size: 11px; display: block; margin-top: 2px; }
+  .account-signout {
+    display: inline-block;
+    margin-top: 8px;
+    color: #ff6b6b;
+    font-size: 12px;
+  }
+
+  /* SIDEBAR NAV */
+  .sidebar-nav {
+    flex: 1;
+    overflow-y: auto;
+    padding: 6px 0;
+  }
+  .sidebar-nav::-webkit-scrollbar { width: 4px; }
+  .sidebar-nav::-webkit-scrollbar-thumb { background: #33485c; }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 22px;
+    font-size: 12px;
+    color: #c5ced6;
+    cursor: pointer;
+    letter-spacing: 0.2px;
+  }
+  .nav-item:hover { color: #ffffff; background-color: #223344; }
+  .nav-caret {
+    display: inline-block;
+    width: 14px;
+    font-size: 10px;
+    color: #9aa8b6;
+    margin-right: 4px;
+    transition: transform 0.15s;
+  }
+  details[open] > summary .nav-caret {
+    transform: rotate(90deg);
+    color: #ffffff;
+  }
+  details[open] > summary.nav-item {
+    color: #ffffff;
+    font-weight: 600;
+  }
+  .badge-new {
+    background-color: #00b956;
+    color: #ffffff;
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 10px;
+    margin-left: 8px;
+  }
+  .nav-sub-group > summary {
+    display: flex;
+    align-items: center;
+    padding: 10px 22px 10px 30px;
+    font-size: 12.5px;
+    color: #c5ced6;
+    cursor: pointer;
+  }
+  .nav-sub-group > summary:hover { color: #fff; background-color: #223344; }
+  .nav-sub-group[open] > summary { color: #fff; font-weight: 600; }
+  .nav-sub-list { padding: 2px 0 4px 0; }
+  .nav-sub-link {
+    display: block;
+    padding: 10px 22px 10px 56px;
+    font-size: 12.5px;
+    color: #c5ced6;
+    cursor: pointer;
+  }
+  .nav-sub-link:hover { color: #ffffff; background-color: #233445; }
+
+  /* SIDEBAR FOOTER */
+  .sidebar-footer {
+    height: 92px;
+    background-color: #1f2f3e;
+    border-top: 1px solid #283a4b;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .footer-phone {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #4696db;
+    font-size: 13px;
+  }
+  .help-btn {
+    display: inline-flex;
+    align-items: stretch;
+    height: 32px;
+    width: 164px;
+    background-color: #00abdb;
+    border-radius: 4px;
+    overflow: hidden;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .help-btn-icon {
+    width: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid #0092bc;
+    background-color: #00a4d2;
+  }
+  .help-btn-text {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* VIEW SWITCHING VIA PURE CSS :target */
+  .page-view {
+    display: none;
+    flex: 1;
+    min-width: 0;
+    flex-direction: column;
+    padding: 26px 34px 40px 34px;
+    overflow-y: auto;
+    height: 100vh;
+  }
+  .page-view:target {
+    display: flex;
+  }
+  :root:not(:has(.page-view:target)) #view-item-sales {
+    display: flex;
+  }
+
+  /* ACTIVE SIDEBAR LINK HIGHLIGHTING */
+  :root:not(:has(.page-view:target)) .sidebar a[href="#view-item-sales"],
+  :root:has(#view-dashboard:target, #view-dashboard-compare:target) .sidebar a[href="#view-dashboard"],
+  :root:has(#view-gopay-setup:target) .sidebar a[href="#view-gopay-setup"],
+  :root:has(#view-gopay-analytics:target) .sidebar a[href="#view-gopay-analytics"],
+  :root:has(#view-sales-summary:target, #view-gross-profit:target, #view-payment-methods:target, #view-sales-type:target, #view-item-sales:target, #view-category-sales:target, #view-brand-sales:target, #view-modifier-sales:target, #view-discounts-report:target, #view-taxes-report:target, #view-gratuity-report:target, #view-collected-by:target, #view-served-by:target) .sidebar a[href="#view-item-sales"],
+  :root:has(#view-transactions:target) .sidebar a[href="#view-transactions"],
+  :root:has(#view-invoices:target) .sidebar a[href="#view-invoices"],
+  :root:has(#view-shift:target) .sidebar a[href="#view-shift"],
+  :root:has(#view-library-items:target) .sidebar a[href="#view-library-items"],
+  :root:has(#view-library-modifiers:target) .sidebar a[href="#view-library-modifiers"],
+  :root:has(#view-library-categories:target) .sidebar a[href="#view-library-categories"],
+  :root:has(#view-library-bundle:target) .sidebar a[href="#view-library-bundle"],
+  :root:has(#view-library-promo:target) .sidebar a[href="#view-library-promo"],
+  :root:has(#view-library-discounts:target) .sidebar a[href="#view-library-discounts"],
+  :root:has(#view-library-taxes:target) .sidebar a[href="#view-library-taxes"],
+  :root:has(#view-library-gratuity:target) .sidebar a[href="#view-library-gratuity"],
+  :root:has(#view-library-salestype:target) .sidebar a[href="#view-library-salestype"],
+  :root:has(#view-library-brands:target) .sidebar a[href="#view-library-brands"],
+  :root:has(#view-ingredient:target) .sidebar a[href="#view-ingredient"],
+  :root:has(#view-inventory-summary:target) .sidebar a[href="#view-inventory-summary"],
+  :root:has(#view-inventory-suppliers:target) .sidebar a[href="#view-inventory-suppliers"],
+  :root:has(#view-inventory-po:target) .sidebar a[href="#view-inventory-po"],
+  :root:has(#view-inventory-transfer:target) .sidebar a[href="#view-inventory-transfer"],
+  :root:has(#view-inventory-adjustment:target) .sidebar a[href="#view-inventory-adjustment"],
+  :root:has(#view-online-channels:target) .sidebar a[href="#view-online-channels"],
+  :root:has(#view-customers-list:target) .sidebar a[href="#view-customers-list"],
+  :root:has(#view-customers-feedback:target) .sidebar a[href="#view-customers-feedback"],
+  :root:has(#view-customers-loyalty:target) .sidebar a[href="#view-customers-loyalty"],
+  :root:has(#view-employees-slots:target) .sidebar a[href="#view-employees-slots"],
+  :root:has(#view-employees-access:target) .sidebar a[href="#view-employees-access"],
+  :root:has(#view-employees-pin:target) .sidebar a[href="#view-employees-pin"],
+  :root:has(#view-customer-display:target) .sidebar a[href="#view-customer-display"],
+  :root:has(#view-table-management:target) .sidebar a[href="#view-table-management"],
+  :root:has(#view-partner-solutions:target) .sidebar a[href="#view-partner-solutions"],
+  :root:has(#view-payments:target) .sidebar a[href="#view-payments"],
+  :root:has(#view-settings-account:target) .sidebar a[href="#view-settings-account"],
+  :root:has(#view-settings-billing:target) .sidebar a[href="#view-settings-billing"],
+  :root:has(#view-settings-outlets:target) .sidebar a[href="#view-settings-outlets"],
+  :root:has(#view-settings-bank:target) .sidebar a[href="#view-settings-bank"],
+  :root:has(#view-settings-profile:target) .sidebar a[href="#view-settings-profile"],
+  :root:has(#view-settings-receipt:target) .sidebar a[href="#view-settings-receipt"],
+  :root:has(#view-settings-checkout:target) .sidebar a[href="#view-settings-checkout"] {
+    background-color: #243545;
+    color: #2d9cf0;
+  }
+
+  /* COMMON MAIN ELEMENTS */
+  .top-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    flex-shrink: 0;
+  }
+  .page-title {
+    font-size: 30px;
+    font-weight: 400;
+    color: #263544;
+    line-height: 1.1;
+  }
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-export, .btn-primary {
+    height: 34px;
+    padding: 0 14px;
+    background-color: #2574a9;
+    border: 1px solid #1f6391;
+    border-radius: 4px;
+    color: #ffffff;
+    font-size: 13.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+  }
+  .btn-outline {
+    height: 34px;
+    padding: 0 14px;
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    color: #333333;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+  .outlet-box {
+    width: 212px;
+    height: 34px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    gap: 8px;
+    font-size: 13px;
+    color: #333;
+  }
+  .pill-select {
+    height: 34px;
+    padding: 0 14px;
+    border: 1px solid #ccc;
+    border-radius: 18px;
+    background: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    font-size: 13px;
+    color: #555;
+    min-width: 140px;
+  }
+  .search-pill {
+    height: 34px;
+    padding: 0 14px;
+    border: 1px solid #ccc;
+    border-radius: 18px;
+    background: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 210px;
+    font-size: 13px;
+    color: #888;
+  }
+  .date-group {
+    display: inline-flex;
+    height: 34px;
+  }
+  .date-arrow {
+    width: 30px;
+    border: 1px solid #ccc;
+    background: #fff;
+    color: #555;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+  }
+  .date-arrow.left { border-radius: 4px 0 0 4px; }
+  .date-arrow.right { border-radius: 0 4px 4px 0; }
+  .date-display {
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    border-left: none;
+    border-right: none;
+    background: #fff;
+    padding: 0 16px;
+    font-size: 13px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* REPORT SPLIT LAYOUT */
+  .report-body {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    flex: 1;
+    min-height: 0;
+  }
+  .report-subnav {
+    width: 222px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .subnav-pill {
+    display: block;
+    padding: 11px 16px;
+    font-size: 13.5px;
+    color: #666666;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .subnav-pill:hover { color: #2574a9; }
+  .subnav-pill.active {
+    background-color: #2574a9;
+    color: #ffffff;
+  }
+  .report-pane {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .mode-tabs {
+    display: flex;
+    border-bottom: 1px solid #eaeaea;
+    margin-bottom: 14px;
+  }
+  .mode-tab {
+    padding: 8px 20px 10px 20px;
+    font-size: 15px;
+    color: #2574a9;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -1px;
+    cursor: pointer;
+  }
+  .mode-tab.active {
+    color: #2574a9;
+    border-bottom-color: #2574a9;
+  }
+  .report-desc {
+    color: #666666;
+    font-size: 13.5px;
+    margin-bottom: 15px;
+  }
+
+  /* TABLES */
+  .table-wrap {
+    width: 100%;
+    max-height: calc(100vh - 235px);
+    overflow: auto;
+    border-top: 1px solid #dddddd;
+    border-bottom: 1px solid #dddddd;
+    position: relative;
+  }
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  table.wide-table { min-width: 1280px; }
+  thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background-color: #efefef;
+    color: #333333;
+    font-size: 12.5px;
+    font-weight: 700;
+    height: 45px;
+    padding: 0 12px;
+    text-align: left;
+    white-space: nowrap;
+    border-bottom: 1px solid #dddddd;
+  }
+  thead th.sticky-col {
+    position: sticky;
+    left: 0;
+    z-index: 3;
+    background-color: #efefef;
+    border-right: 1px solid #dddddd;
+    min-width: 155px;
+  }
+  tbody td {
+    height: 45px;
+    padding: 0 12px;
+    font-size: 13px;
+    color: #333333;
+    border-bottom: 1px solid #f0f0f0;
+    white-space: nowrap;
+    background-color: #ffffff;
+  }
+  tbody td.sticky-col {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background-color: #ffffff;
+    border-right: 1px solid #e2e2e2;
+  }
+  tbody tr:hover td, tbody tr:hover td.sticky-col {
+    background-color: #f9fbfd;
+  }
+  tfoot td {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    height: 46px;
+    padding: 0 12px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #333333;
+    background-color: #f7f7f7;
+    border-top: 2px solid #dddddd;
+    white-space: nowrap;
+  }
+  tfoot td.sticky-col {
+    position: sticky;
+    left: 0;
+    z-index: 3;
+    background-color: #f7f7f7;
+    border-right: 1px solid #dddddd;
+  }
+  .r { text-align: right; }
+  .c { text-align: center; }
+  .sort-up::after { content: " \25B4"; font-size: 10px; color: #222; }
+  .sort-down::after { content: " \25BE"; font-size: 10px; color: #222; }
+  .info-dot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background-color: #333;
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+    font-style: normal;
+    margin-left: 3px;
+    vertical-align: middle;
+  }
+
+  /* DASHBOARD STYLES */
+  .section-heading {
+    font-size: 16px;
+    font-weight: 400;
+    color: #666;
+    text-transform: uppercase;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e5e5e5;
+    margin: 14px 0 18px 0;
+  }
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 22px;
+  }
+  .kpi-card {
+    border: 1px solid #e5e5e5;
+    padding: 20px 22px;
+    background: #fff;
+    display: block;
+  }
+  .kpi-card:hover {
+    border-color: #b8d4ea;
+  }
+  .kpi-label {
+    font-size: 12px;
+    color: #888;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .kpi-value {
+    font-size: 23px;
+    color: #444;
+    font-weight: 400;
+  }
+  .chart-card {
+    border: 1px solid #e5e5e5;
+    padding: 20px 22px;
+    margin-bottom: 20px;
+    background: #fff;
+  }
+  .chart-grid-2 {
+    display: grid;
+    grid-template-columns: 32.5% 1fr;
+    gap: 18px;
+    margin-bottom: 20px;
+  }
+  .zebra-table tbody tr:nth-child(even) td {
+    background-color: #f4f4f4;
+  }
+  .rp-cell {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .rp-cell span:first-child {
+    color: #777;
+  }
+
+  /* SUMMARY TABLE CARD (Sales Summary / Gross Profit) */
+  .summary-list-card {
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    max-width: 680px;
+  }
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 13px 18px;
+    border-bottom: 1px solid #efefef;
+    font-size: 13.5px;
+    color: #333;
+  }
+  .summary-row.bold {
+    font-weight: 700;
+    background-color: #f9f9f9;
+    border-top: 1px solid #dcdcdc;
+    border-bottom: 1px solid #dcdcdc;
+  }
+
+  /* TRANSACTIONS V2 */
+  .tx-kpi-banner {
+    border: 1px solid #dce1e7;
+    border-radius: 6px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    padding: 22px 16px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .tx-kpi-banner strong {
+    display: block;
+    font-size: 20px;
+    color: #1f2d3d;
+    margin-bottom: 6px;
+  }
+  .tx-kpi-banner span {
+    font-size: 12px;
+    color: #6b7785;
+    text-transform: uppercase;
+  }
+  .tx-group-row td {
+    background-color: #f4f6f9 !important;
+    font-weight: 700;
+    color: #263544;
+  }
+
+  /* EMPTY STATE & INFO BARS */
+  .empty-state {
+    text-align: center;
+    padding: 70px 20px;
+    color: #777;
+  }
+  .empty-state h3 {
+    font-size: 18px;
+    color: #444;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+  .bottom-info-bar {
+    background-color: #d6ecff;
+    color: #334e68;
+    text-align: center;
+    padding: 12px;
+    font-size: 13px;
+    margin-top: 10px;
+    border-radius: 2px;
+  }
+  .bottom-info-bar a {
+    color: #1b6ec2;
+    text-decoration: underline;
+  }
+
+  /* SETTINGS CARDS */
+  .settings-card {
+    border: 1px solid #e2e2e2;
+    border-radius: 4px;
+    padding: 22px 26px;
+    margin-bottom: 20px;
+    max-width: 780px;
+  }
+  .settings-card h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #263544;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eee;
+  }
+  .field-grid {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    row-gap: 12px;
+    column-gap: 16px;
+    align-items: center;
+    font-size: 13.5px;
+  }
+  .field-label { color: #777; }
+  .field-val { color: #222; font-weight: 500; }
+  .badge-verified {
+    display: inline-block;
+    background: #e6f7ed;
+    color: #1e8e3e;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-left: 8px;
+  }
+  .form-input {
+    width: 100%;
+    max-width: 420px;
+    height: 34px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 0 10px;
+    font-size: 13px;
+    color: #333;
+  }
+  .toggle-pill {
+    display: inline-flex;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    overflow: hidden;
+    font-size: 12px;
+  }
+  .toggle-pill span {
+    padding: 5px 12px;
+    background: #f5f5f5;
+    color: #777;
+  }
+  .toggle-pill span.on {
+    background: #2574a9;
+    color: #fff;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+<div class="app-layout">
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <a href="#view-dashboard">
+        <svg class="moka-logo" viewBox="0 0 140 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <text x="0" y="27" fill="#687888" font-family="Helvetica Neue, Arial, sans-serif" font-size="33" font-weight="700" letter-spacing="-1.5">moka</text>
+        </svg>
+      </a>
+    </div>
+
+    <details class="account-details">
+      <summary class="sidebar-account">
+        <span>demo acount</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </summary>
+      <div class="account-card">
+        <div class="account-card-row">
+          <div class="account-ava">D</div>
+          <div>
+            <b><a href="#view-settings-profile">demo acount</a></b>
+            <small>BID: 8492015</small>
+            <small>demo.acount@gmail.com</small>
+          </div>
+        </div>
+        <a href="#view-settings-account" class="account-signout">&#10162; Sign Out</a>
+      </div>
+    </details>
+
+    <nav class="sidebar-nav">
+      <a href="#view-dashboard" class="nav-item">DASHBOARD</a>
+
+      <details>
+        <summary class="nav-item">
+          <span class="nav-caret">&#10095;</span>
+          <span>GOPAY BIO</span>
+          <span class="badge-new">New!</span>
+        </summary>
+        <div class="nav-sub-list">
+          <a href="#view-gopay-setup" class="nav-sub-link">Setup</a>
+          <a href="#view-gopay-analytics" class="nav-sub-link">Analytics</a>
+        </div>
+      </details>
+
+      <details open>
+        <summary class="nav-item">
+          <span class="nav-caret">&#10095;</span>
+          <span>POS</span>
+        </summary>
+
+        <!-- Reports -->
+        <details class="nav-sub-group" open>
+          <summary><span class="nav-caret">&#10095;</span><span>Reports</span></summary>
+          <div class="nav-sub-list">
+            <a href="#view-item-sales" class="nav-sub-link">Sales</a>
+            <a href="#view-transactions" class="nav-sub-link">Transactions</a>
+            <a href="#view-invoices" class="nav-sub-link">Invoices</a>
+            <a href="#view-shift" class="nav-sub-link">Shift</a>
+          </div>
+        </details>
+
+        <!-- Library -->
+        <details class="nav-sub-group">
+          <summary><span class="nav-caret">&#10095;</span><span>Library</span></summary>
+          <div class="nav-sub-list">
+            <a href="#view-library-items" class="nav-sub-link">Item Library</a>
+            <a href="#view-library-modifiers" class="nav-sub-link">Modifiers</a>
+            <a href="#view-library-categories" class="nav-sub-link">Categories</a>
+            <a href="#view-library-bundle" class="nav-sub-link">Bundle Package</a>
+            <a href="#view-library-promo" class="nav-sub-link">Promo</a>
+            <a href="#view-library-discounts" class="nav-sub-link">Discounts</a>
+            <a href="#view-library-taxes" class="nav-sub-link">Taxes</a>
+            <a href="#view-library-gratuity" class="nav-sub-link">Gratuity</a>
+            <a href="#view-library-salestype" class="nav-sub-link">Sales Type</a>
+            <a href="#view-library-brands" class="nav-sub-link">Brands</a>
+          </div>
+        </details>
+
+        <!-- Ingredient -->
+        <details class="nav-sub-group">
+          <summary><span class="nav-caret">&#10095;</span><span>Ingredient</span></summary>
+          <div class="nav-sub-list">
+            <a href="#view-ingredient" class="nav-sub-link">Ingredient Library</a>
+            <a href="#view-ingredient" class="nav-sub-link">Ingredient Categories</a>
+            <a href="#view-ingredient" class="nav-sub-link">Recipes</a>
+          </div>
+        </details>
+
+        <!-- Inventory -->
+        <details class="nav-sub-group">
+          <summary><span class="nav-caret">&#10095;</span><span>Inventory</span></summary>
+          <div class="nav-sub-list">
+            <a href="#view-inventory-summary" class="nav-sub-link">Summary</a>
+            <a href="#view-inventory-suppliers" class="nav-sub-link">Suppliers</a>
+            <a href="#view-inventory-po" class="nav-sub-link">Purchase Order (PO)</a>
+            <a href="#view-inventory-transfer" class="nav-sub-link">Transfer</a>
+            <a href="#view-inventory-adjustment" class="nav-sub-link">Adjustment</a>
+          </div>
+        </details>
+
+        <!-- Online Channels -->
+        <details class="nav-sub-group">
+          <summary><span class="nav-caret">&#10095;</span><span>Online Channels</span></summary>
+          <div class="nav-sub-list">
+            <a href="#view-online-channels" class="nav-sub-link">Moka Order</a>
+            <a href="#view-online-channels" class="nav-sub-link">GoFood</a>
+          </div>
+        </details>
+
+        <!-- Customers -->
+        <details class="nav-sub-group">
+          <summary><span class="nav-caret">&#10095;</span><span>Customers</span></summary>
+          <div class="nav-sub-list">
+            <a href="#view-customers-list" class="nav-sub-link">Customers List</a>
+            <a href="#view-customers-feedback" class="nav-sub-link">Feedback</a>
+            <a href="#view-customers-loyalty" class="nav-sub-link">Loyalty Program</a>
+          </div>
+        </details>
+
+        <!-- Employees -->
+        <details class="nav-sub-group">
+          <summary><span class="nav-caret">&#10095;</span><span>Employees</span></summary>
+          <div class="nav-sub-list">
+            <a href="#view-employees-slots" class="nav-sub-link">Employee Slots</a>
+            <a href="#view-employees-access" class="nav-sub-link">Employee Access</a>
+            <a href="#view-employees-pin" class="nav-sub-link">PIN Access</a>
+          </div>
+        </details>
+
+        <!-- Customer Display -->
+        <details class="nav-sub-group">
+          <summary><span class="nav-caret">&#10095;</span><span>Customer Display</span></summary>
+          <div class="nav-sub-list">
+            <a href="#view-customer-display" class="nav-sub-link">Campaign</a>
+            <a href="#view-customer-display" class="nav-sub-link">Settings</a>
+          </div>
+        </details>
+
+        <!-- Table Management -->
+        <details class="nav-sub-group">
+          <summary><span class="nav-caret">&#10095;</span><span>Table Management</span></summary>
+          <div class="nav-sub-list">
+            <a href="#view-table-management" class="nav-sub-link">Table Group</a>
+            <a href="#view-table-management" class="nav-sub-link">Table Map</a>
+            <a href="#view-table-management" class="nav-sub-link">Table Report</a>
+          </div>
+        </details>
+
+        <a href="#view-partner-solutions" class="nav-item" style="padding-left:30px"><span class="nav-caret"></span><span>Partner Solutions</span></a>
+
+        <!-- Payments -->
+        <details class="nav-sub-group">
+          <summary><span class="nav-caret">&#10095;</span><span>Payments</span></summary>
+          <div class="nav-sub-list">
+            <a href="#view-payments" class="nav-sub-link">QRIS</a>
+            <a href="#view-payments" class="nav-sub-link">Payment Configuration</a>
+          </div>
+        </details>
+      </details>
+
+      <!-- ACCOUNT SETTINGS -->
+      <details>
+        <summary class="nav-item">
+          <span class="nav-caret">&#10095;</span>
+          <span>ACCOUNT SETTINGS</span>
+        </summary>
+        <div class="nav-sub-list">
+          <a href="#view-settings-account" class="nav-sub-link">Account</a>
+          <a href="#view-settings-billing" class="nav-sub-link">Billing</a>
+          <a href="#view-settings-outlets" class="nav-sub-link">Outlets</a>
+          <a href="#view-settings-bank" class="nav-sub-link">Bank Account</a>
+          <a href="#view-settings-profile" class="nav-sub-link">Public Profile</a>
+          <a href="#view-settings-receipt" class="nav-sub-link">Receipt</a>
+          <a href="#view-settings-checkout" class="nav-sub-link">Checkout</a>
+        </div>
+      </details>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="footer-phone">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="#4696db"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1C10.61 21 3 13.39 3 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.46.57 3.59a1 1 0 01-.25 1.01l-2.2 2.19z"/></svg>
+        <span>1500970</span>
+      </div>
+      <a href="#view-dashboard" class="help-btn">
+        <span class="help-btn-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#1d2c3a"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+        </span>
+        <span class="help-btn-text">Tutorials &amp; Help</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- =================================================================== -->
+  <!-- 1. DASHBOARD VIEW (WITH EXACT GOOGLE VISUALIZATION SVGS)            -->
+  <!-- =================================================================== -->
+  <main id="view-dashboard" class="page-view">
+    <div class="top-header">
+      <h2 class="page-title">Dashboard</h2>
+    </div>
+    <div class="mode-tabs" style="margin-bottom:20px">
+      <a href="#view-dashboard" class="mode-tab active">Ringkasan</a>
+      <a href="#view-dashboard-compare" class="mode-tab">Perbandingan Outlet</a>
+    </div>
+    <div class="filter-bar">
+      <div class="outlet-box">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="#888"><path d="M4 7l1-3h14l1 3v2H4V7zm1 4h14v9h-4v-6H9v6H5v-9z"/></svg>
+        <span>demo acount</span>
+      </div>
+      <div class="date-group">
+        <button type="button" class="date-arrow left">&#10094;</button>
+        <button type="button" class="date-display"><span>1/10/2026 - 31/10/2026</span><span style="font-size:11px;color:#666">&#8964;</span></button>
+        <button type="button" class="date-arrow right">&#10095;</button>
+      </div>
+    </div>
+
+    <div class="section-heading">RINGKASAN PENJUALAN</div>
+    <div class="kpi-grid">
+      <a href="#view-sales-summary" class="kpi-card"><div class="kpi-label">PENJUALAN KOTOR</div><div class="kpi-value">Rp. 185.585.500</div></a>
+      <a href="#view-sales-summary" class="kpi-card"><div class="kpi-label">PENJUALAN BERSIH</div><div class="kpi-value">Rp. 182.056.600</div></a>
+      <a href="#view-gross-profit" class="kpi-card"><div class="kpi-label">LABA KOTOR</div><div class="kpi-value">Rp. 182.056.600</div></a>
+      <a href="#view-payment-methods" class="kpi-card"><div class="kpi-label">TRANSAKSI</div><div class="kpi-value">489</div></a>
+      <a href="#view-transactions" class="kpi-card"><div class="kpi-label">RATA-RATA PENJUALAN PER TRANSAKSI</div><div class="kpi-value">Rp. 372.304</div></a>
+      <a href="#view-gross-profit" class="kpi-card"><div class="kpi-label">MARGIN KOTOR</div><div class="kpi-value">100.00%</div></a>
+    </div>
+
+    <!-- CHART 1: DAILY GROSS SALES AMOUNT -->
+    <div class="chart-card">
+      <div class="kpi-label" style="margin-bottom:4px">DAILY GROSS SALES AMOUNT</div>
+      <svg viewBox="0 0 953 200" width="100%" height="200" aria-label="A chart." style="overflow: hidden;"><defs id="_ABSTRACT_RENDERER_ID_48"><clipPath id="_ABSTRACT_RENDERER_ID_49"><rect x="102" y="38" width="749" height="124"></rect></clipPath></defs><rect x="0" y="0" width="953" height="200" stroke="none" stroke-width="0" fill="#ffffff"></rect><g><rect x="102" y="38" width="749" height="124" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff"></rect><g clip-path="url(#_ABSTRACT_RENDERER_ID_49)"><g><g><path d="M102.5,161.5L102.5,161.5L102.5,130.71925L128.29310344827587,93.90765625L154.08620689655172,115.4365L179.8793103448276,115.1674375L205.67241379310343,123.4545625L231.4655172413793,132.364375L257.2586206896552,129.028L283.05172413793105,127.44437500000001L308.84482758620686,96.0409375L334.6379310344828,92.28943749999999L360.4310344827586,116.08993749999999L386.2241379310345,132.62574999999998L412.01724137931035,124.1771875L437.8103448275862,133.4636875L463.60344827586204,111.98096874999999L489.3965517241379,119.080375L515.1896551724137,109.5709375L540.9827586206897,88.0613125L566.7758620689656,114.068125L592.5689655172414,98.67775L618.3620689655172,146.2403125L644.1551724137931,102.6521875L669.948275862069,116.728L695.7413793103448,129.98125L721.5344827586207,112.669L747.3275862068965,117.173875L773.1206896551724,101.31071875L798.9137931034483,41.02918749999999L824.7068965517241,136.6155625L850.5,147.800875L850.5,161.5L850.5,161.5L824.7068965517241,161.5L798.9137931034483,161.5L773.1206896551724,161.5L747.3275862068965,161.5L721.5344827586207,161.5L695.7413793103448,161.5L669.948275862069,161.5L644.1551724137931,161.5L618.3620689655172,161.5L592.5689655172414,161.5L566.7758620689656,161.5L540.9827586206897,161.5L515.1896551724137,161.5L489.3965517241379,161.5L463.60344827586204,161.5L437.8103448275862,161.5L412.01724137931035,161.5L386.2241379310345,161.5L360.4310344827586,161.5L334.6379310344828,161.5L308.84482758620686,161.5L283.05172413793105,161.5L257.2586206896552,161.5L231.4655172413793,161.5L205.67241379310343,161.5L179.8793103448276,161.5L154.08620689655172,161.5L128.29310344827587,161.5L102.5,161.5" stroke="none" stroke-width="0" fill="#3498db"></path></g></g><g><rect x="102" y="161" width="749" height="1" stroke="none" stroke-width="0" fill="#333333"></rect></g><g><path d="M102.5,130.71925L128.29310344827587,93.90765625L154.08620689655172,115.4365L179.8793103448276,115.1674375L205.67241379310343,123.4545625L231.4655172413793,132.364375L257.2586206896552,129.028L283.05172413793105,127.44437500000001L308.84482758620686,96.0409375L334.6379310344828,92.28943749999999L360.4310344827586,116.08993749999999L386.2241379310345,132.62574999999998L412.01724137931035,124.1771875L437.8103448275862,133.4636875L463.60344827586204,111.98096874999999L489.3965517241379,119.080375L515.1896551724137,109.5709375L540.9827586206897,88.0613125L566.7758620689656,114.068125L592.5689655172414,98.67775L618.3620689655172,146.2403125L644.1551724137931,102.6521875L669.948275862069,116.728L695.7413793103448,129.98125L721.5344827586207,112.669L747.3275862068965,117.173875L773.1206896551724,101.31071875L798.9137931034483,41.02918749999999L824.7068965517241,136.6155625L850.5,147.800875" stroke="#3498db" stroke-width="2" fill-opacity="1" fill="none"></path></g></g><g></g><g><g><text text-anchor="end" x="104.775" y="174.4404155872192" font-family="Arial" font-size="13" transform="rotate(-30 104.775 174.4404155872192)" stroke="none" stroke-width="0" fill="#222222">01-1â€¦</text><path d="M60.27885682970027,187.37083487540116L99.25000000000001,164.8708348754012L105.75000000000001,176.12916512459887L66.77885682970026,198.62916512459884Z" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff"></path></g><g><text text-anchor="end" x="156.36120689655172" y="174.4404155872192" font-family="Arial" font-size="13" transform="rotate(-30 156.36120689655172 174.4404155872192)" stroke="none" stroke-width="0" fill="#222222">03-1â€¦</text><path d="M111.86506372625198,187.37083487540116L150.83620689655172,164.87083487540116L157.33620689655172,176.12916512459887L118.36506372625198,198.62916512459887Z" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff"></path></g><g><text text-anchor="end" x="207.94741379310344" y="174.4404155872192" font-family="Arial" font-size="13" transform="rotate(-30 207.94741379310344 174.4404155872192)" stroke="none" stroke-width="0" fill="#222222">05-1â€¦</text><path d="M163.4512706228037,187.37083487540116L202.42241379310343,164.87083487540116L208.92241379310343,176.12916512459884L169.95127062280366,198.62916512459884Z" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff"></path></g><g><text text-anchor="end" x="259.53362068965515" y="174.4404155872192" font-family="Arial" font-size="13" transform="rotate(-30 259.53362068965515 174.4404155872192)" stroke="none" stroke-width="0" fill="#222222">07-1â€¦</text><path d="M215.03747751935543,187.37083487540113L254.00862068965517,164.87083487540116L260.5086206896552,176.12916512459884L221.53747751935543,198.62916512459884Z" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff"></path></g><g><text text-anchor="end" x="311.11982758620684" y="174.4404155872192" font-family="Arial" font-size="13" transform="rotate(-30 311.11982758620684 174.4404155872192)" stroke="none" stroke-width="0" fill="#222222">09-1â€¦</text><path d="M266.62368441590706,187.37083487540116L305.59482758620686,164.87083487540116L312.09482758620686,176.12916512459884L273.12368441590706,198.62916512459884Z" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff"></path></g><g><text text-anchor="end" x="362.7060344827586" y="174.4404155872192" font-family="Arial" font-size="13" transform="rotate(-30 362.7060344827586 174.4404155872192)" stroke="none" stroke-width="0" fill="#222222">11-10â€¦</text><path d="M318.2098913124589,187.37083487540116L357.1810344827586,164.87083487540116L363.6810344827586,176.12916512459884L324.7098913124589,198.62916512459884Z" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff"></path></g><g><text text-anchor="end" x="414.2922413793103" y="174.4404155872192" font-family="Arial" font-size="13" transform="rotate(-30 414.2922413793103 174.4404155872192)" stroke="none" stroke-width="0" fill="#222222">13-1â€¦</text><path d="M369.79609820901055,187.3708348754011L408.76724137931035,164.87083487540113L415.26724137931035,176.12916512459887L376.29609820901055,198.62916512459884Z" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff"></path></g><g><text text-anchor="end" x="465.878448275862" y="174.4404155872192" font-family="Arial" font-size="13" transform="rotate(-30 465.878448275862 174.4404155872192)" stroke="none" stroke-width="0" fill="#222222">15-1â€¦</text><path d="M421.3823051055623,187.3708348754012L460.35344827586204,164.8708348754012L466.85344827586204,176.12916512459887L427.8823051055623,198.62916512459887Z" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff"></path></g><g><text text-anchor="end" x="517.4646551724137" y="174.4404155872192" font-family="Arial" font-size="13" transform="rotate(-30 517.4646551724137 174.4404155872192)" stroke="none" stroke-width="0" fill="#222222">17-1â€¦</text><path d="M472.968512002114,187.37083487540116L511.9396551724137,164.87083487540116L518.4396551724137,176.12916512459884L479.468512002114,198.62916512459884Z" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff"></path></g><g><text text-anchor="end" x="569.0508620689656" y="174.4404155872192" font-family="Arial" font-size="13" transform="rotate(-30 569.0508620689656 174.4404155872192)" stroke="none" stroke-width="0" fill="#222222">19-1â€¦</text><path d="M524.5547188986659,187.37083487540116L563.5258620689656,164.87083487540116L570.0258620689656,176.12916512459884L531.0547188986659,198.62916512459884Z" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff"></path></g><g><text text-anchor="end" x="620.6370689655172" y="174.4404155872192" font-family="Arial" font-size="13" transform="rotate(-30 620.6370689655172 174.4404155872192)" stroke="none" stroke-width="0" fill="#222222">21-1â€¦</text><path d="M576.1409257952175,187.37083487540113L615.1120689655172,164.87083487540113L621.6120689655172,176.12916512459887L582.6409257952175,198.62916512459887Z" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff"></path></g><g><text text-anchor="end" x="672.2232758620689" y="174.4404155872192" font-family="Arial" font-size="13" transform="rotate(-30 672.2232758620689 174.4404155872192)" stroke="none" stroke-width="0" fill="#222222">23-1â€¦</text><path d="M627.7271326917692,187.3708348754012L666.698275862069,164.8708348754012L673.198275862069,176.12916512459887L634.2271326917692,198.62916512459887Z" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff"></path></g><g><text text-anchor="end" x="723.8094827586207" y="174.4404155872192" font-family="Arial" font-size="13" transform="rotate(-30 723.8094827586207 174.4404155872192)" stroke="none" stroke-width="0" fill="#222222">25-1â€¦</text><path d="M679.313339588321,187.3708348754012L718.2844827586207,164.87083487540121L724.7844827586207,176.12916512459884L685.8133395883209,198.6291651245988Z" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff"></path></g><g><text text-anchor="end" x="775.3956896551724" y="174.4404155872192" font-family="Arial" font-size="13" transform="rotate(-30 775.3956896551724 174.4404155872192)" stroke="none" stroke-width="0" fill="#222222">27-1â€¦</text><path d="M730.8995464848728,187.37083487540116L769.8706896551726,164.87083487540116L776.3706896551726,176.12916512459884L737.3995464848728,198.62916512459884Z" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff"></path></g><g><text text-anchor="end" x="826.981896551724" y="174.4404155872192" font-family="Arial" font-size="13" transform="rotate(-30 826.981896551724 174.4404155872192)" stroke="none" stroke-width="0" fill="#222222">29-1â€¦</text><path d="M782.4857533814243,187.37083487540116L821.4568965517241,164.87083487540116L827.9568965517241,176.1291651245989L788.9857533814243,198.6291651245989Z" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff"></path></g><g><text text-anchor="end" x="89" y="166.05" font-family="Arial" font-size="13" stroke="none" stroke-width="0" fill="#444444">0</text></g><g><text text-anchor="end" x="89" y="150.675" font-family="Arial" font-size="13" stroke="none" stroke-width="0" fill="#444444">2,000,000</text></g><g><text text-anchor="end" x="89" y="135.3" font-family="Arial" font-size="13" stroke="none" stroke-width="0" fill="#444444">4,000,000</text></g><g><text text-anchor="end" x="89" y="119.925" font-family="Arial" font-size="13" stroke="none" stroke-width="0" fill="#444444">6,000,000</text></g><g><text text-anchor="end" x="89" y="104.55" font-family="Arial" font-size="13" stroke="none" stroke-width="0" fill="#444444">8,000,000</text></g><g><text text-anchor="end" x="89" y="89.175" font-family="Arial" font-size="13" stroke="none" stroke-width="0" fill="#444444">10,000,000</text></g><g><text text-anchor="end" x="89" y="73.8" font-family="Arial" font-size="13" stroke="none" stroke-width="0" fill="#444444">12,000,000</text></g><g><text text-anchor="end" x="89" y="58.425" font-family="Arial" font-size="13" stroke="none" stroke-width="0" fill="#444444">14,000,000</text></g><g><text text-anchor="end" x="89" y="43.05" font-family="Arial" font-size="13" stroke="none" stroke-width="0" fill="#444444">16,000,000</text></g></g></g><g></g></svg>
+    </div>
+
+    <!-- CHART 2 & 3: DAY OF THE WEEK + HOURLY GROSS SALES AMOUNT -->
+    <div class="chart-grid-2">
+      <div class="chart-card" style="margin-bottom:0">
+        <div class="kpi-label" style="margin-bottom:4px">DAY OF THE WEEK GROSS SALES AMOUNT</div>
+        <svg viewBox="0 0 270 200" width="100%" height="200" aria-label="A chart." style="overflow: hidden;"><defs id="_ABSTRACT_RENDERER_ID_50"><clipPath id="_ABSTRACT_RENDERER_ID_51"><rect x="52" y="38" width="167" height="124"></rect></clipPath></defs><rect x="0" y="0" width="270" height="200" stroke="none" stroke-width="0" fill="#ffffff"></rect><g><rect x="52" y="38" width="167" height="124" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff"></rect><g clip-path="url(#_ABSTRACT_RENDERER_ID_51)"><g><rect x="57" y="64" width="15" height="97" stroke="none" stroke-width="0" fill="#3498db"></rect><rect x="81" y="89" width="14" height="72" stroke="none" stroke-width="0" fill="#3498db"></rect><rect x="104" y="75" width="15" height="86" stroke="none" stroke-width="0" fill="#3498db"></rect><rect x="128" y="72" width="15" height="89" stroke="none" stroke-width="0" fill="#3498db"></rect><rect x="152" y="71" width="15" height="90" stroke="none" stroke-width="0" fill="#3498db"></rect><rect x="176" y="55" width="14" height="106" stroke="none" stroke-width="0" fill="#3498db"></rect><rect x="199" y="54" width="15" height="107" stroke="none" stroke-width="0" fill="#3498db"></rect></g><g><rect x="52" y="161" width="167" height="1" stroke="none" stroke-width="0" fill="#333333"></rect></g></g><g></g><g><g><text text-anchor="middle" x="64.35714285714286" y="176.5" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#222222">Sun</text></g><g><text text-anchor="middle" x="88.07142857142857" y="189.5" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#222222">Mon</text></g><g><text text-anchor="middle" x="111.78571428571429" y="176.5" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#222222">Tue</text></g><g><text text-anchor="middle" x="135.5" y="189.5" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#222222">Wed</text></g><g><text text-anchor="middle" x="159.21428571428572" y="176.5" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#222222">Thu</text></g><g><text text-anchor="middle" x="182.92857142857144" y="189.5" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#222222">Fri</text></g><g><text text-anchor="middle" x="206.64285714285714" y="176.5" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#222222">Sat</text></g><g><text text-anchor="end" x="50" y="165" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">0</text></g><g><text text-anchor="end" x="50" y="147.4286" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">5,000,000</text></g><g><text text-anchor="end" x="50" y="129.8571" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">10,000,â€¦</text><rect x="2" y="121.3571" width="48" height="10" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff"></rect></g><g><text text-anchor="end" x="50" y="112.2857" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">15,000,â€¦</text><rect x="2" y="103.7857" width="48" height="10" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff"></rect></g><g><text text-anchor="end" x="50" y="94.7143" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">20,000,â€¦</text><rect x="2" y="86.2143" width="48" height="10" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff"></rect></g><g><text text-anchor="end" x="50" y="77.1429" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">25,000,â€¦</text><rect x="2" y="68.6429" width="48" height="10" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff"></rect></g><g><text text-anchor="end" x="50" y="59.5714" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">30,000,â€¦</text><rect x="2" y="51.0714" width="48" height="10" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff"></rect></g><g><text text-anchor="end" x="50" y="42" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">35,000,â€¦</text><rect x="2" y="33.5" width="48" height="10" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff"></rect></g></g></g><g></g></svg>
+      </div>
+      <div class="chart-card" style="margin-bottom:0">
+        <div class="kpi-label" style="margin-bottom:4px">HOURLY GROSS SALES AMOUNT</div>
+        <svg viewBox="0 0 611 200" width="100%" height="200" aria-label="A chart." style="overflow: hidden;"><defs id="_ABSTRACT_RENDERER_ID_52"><clipPath id="_ABSTRACT_RENDERER_ID_53"><rect x="80" y="38" width="451" height="124"></rect></clipPath></defs><rect x="0" y="0" width="611" height="200" stroke="none" stroke-width="0" fill="#ffffff"></rect><g><rect x="80" y="38" width="451" height="124" stroke="none" stroke-width="0" fill-opacity="0" fill="#ffffff"></rect><g clip-path="url(#_ABSTRACT_RENDERER_ID_53)"><g><g><path d="M80.5,161.5L80.5,161.5L100.06521739130434,161.5L119.63043478260869,161.5L139.19565217391306,161.5L158.76086956521738,161.5L178.32608695652175,161.5L197.8913043478261,161.5L217.45652173913044,161.5L237.02173913043478,159.15597142857143L256.5869565217391,153.35037142857144L276.1521739130435,147.20037142857143L295.7173913043478,113.41051428571429L315.2826086956522,111.7834L334.8478260869565,112.98177142857142L354.4130434782609,125.65428571428572L373.9782608695652,115.26957142857142L393.54347826086956,109.82242857142856L413.10869565217394,109.78552857142857L432.67391304347825,112.0381857142857L452.2391304347826,53.79417142857143L471.80434782608694,91.25997142857143L491.3695652173913,97.01812857142858L510.9347826086956,157.77485714285714L530.5,161.5L530.5,161.5L510.9347826086956,161.5L491.3695652173913,161.5L471.80434782608694,161.5L452.2391304347826,161.5L432.67391304347825,161.5L413.10869565217394,161.5L393.54347826086956,161.5L373.9782608695652,161.5L354.4130434782609,161.5L334.8478260869565,161.5L315.2826086956522,161.5L295.7173913043478,161.5L276.1521739130435,161.5L256.5869565217391,161.5L237.02173913043478,161.5L217.45652173913044,161.5L197.8913043478261,161.5L178.32608695652175,161.5L158.76086956521738,161.5L139.19565217391306,161.5L119.63043478260869,161.5L100.06521739130434,161.5L80.5,161.5" stroke="none" stroke-width="0" fill="#3498db"></path></g></g><g><rect x="80" y="161" width="451" height="1" stroke="none" stroke-width="0" fill="#333333"></rect></g><g><path d="M80.5,161.5L100.06521739130434,161.5L119.63043478260869,161.5L139.19565217391306,161.5L158.76086956521738,161.5L178.32608695652175,161.5L197.8913043478261,161.5L217.45652173913044,161.5L237.02173913043478,159.15597142857143L256.5869565217391,153.35037142857144L276.1521739130435,147.20037142857143L295.7173913043478,113.41051428571429L315.2826086956522,111.7834L334.8478260869565,112.98177142857142L354.4130434782609,125.65428571428572L373.9782608695652,115.26957142857142L393.54347826086956,109.82242857142856L413.10869565217394,109.78552857142857L432.67391304347825,112.0381857142857L452.2391304347826,53.79417142857143L471.80434782608694,91.25997142857143L491.3695652173913,97.01812857142858L510.9347826086956,157.77485714285714L530.5,161.5" stroke="#3498db" stroke-width="2" fill-opacity="1" fill="none"></path></g></g><g></g><g><g><text text-anchor="middle" x="80.5" y="176.5" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">0</text></g><g><text text-anchor="middle" x="100.0652" y="189.5" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">1</text></g><g><text text-anchor="middle" x="119.6304" y="176.5" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">2</text></g><g><text text-anchor="middle" x="139.1957" y="189.5" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">3</text></g><g><text text-anchor="middle" x="158.7609" y="176.5" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">4</text></g><g><text text-anchor="middle" x="178.3261" y="189.5" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">5</text></g><g><text text-anchor="middle" x="197.8913" y="176.5" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">6</text></g><g><text text-anchor="middle" x="217.4565" y="189.5" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">7</text></g><g><text text-anchor="middle" x="237.0217" y="176.5" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">8</text></g><g><text text-anchor="middle" x="256.587" y="189.5" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">9</text></g><g><text text-anchor="middle" x="276.1522" y="176.5" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">10</text></g><g><text text-anchor="middle" x="295.7174" y="189.5" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">11</text></g><g><text text-anchor="middle" x="315.2826" y="176.5" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">12</text></g><g><text text-anchor="middle" x="334.8478" y="189.5" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">13</text></g><g><text text-anchor="middle" x="354.413" y="176.5" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">14</text></g><g><text text-anchor="middle" x="373.9783" y="189.5" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">15</text></g><g><text text-anchor="middle" x="393.5435" y="176.5" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">16</text></g><g><text text-anchor="middle" x="413.1087" y="189.5" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">17</text></g><g><text text-anchor="middle" x="432.6739" y="176.5" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">18</text></g><g><text text-anchor="middle" x="452.2391" y="189.5" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">19</text></g><g><text text-anchor="middle" x="471.8043" y="176.5" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">20</text></g><g><text text-anchor="middle" x="491.3696" y="189.5" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">21</text></g><g><text text-anchor="middle" x="510.9348" y="176.5" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">22</text></g><g><text text-anchor="middle" x="530.5" y="189.5" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">23</text></g><g><text text-anchor="end" x="70" y="165" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">0</text></g><g><text text-anchor="end" x="70" y="147.4286" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">5,000,000</text></g><g><text text-anchor="end" x="70" y="129.8571" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">10,000,000</text></g><g><text text-anchor="end" x="70" y="112.2857" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">15,000,000</text></g><g><text text-anchor="end" x="70" y="94.7143" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">20,000,000</text></g><g><text text-anchor="end" x="70" y="77.1429" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">25,000,000</text></g><g><text text-anchor="end" x="70" y="59.5714" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">30,000,000</text></g><g><text text-anchor="end" x="70" y="42" font-family="Arial" font-size="10" stroke="none" stroke-width="0" fill="#444444">35,000,000</text></g></g></g><g></g></svg>
+      </div>
+    </div>
+
+    <!-- BOTTOM SECTION: RINGKASAN ITEM > ITEM TERATAS -->
+    <div class="section-heading" style="margin-top:24px"><a href="#view-item-sales">RINGKASAN ITEM</a></div>
+    <div class="chart-card">
+      <div class="kpi-label" style="margin-bottom:14px">ITEM TERATAS</div>
+      <div class="table-wrap" style="max-height:460px">
+        <table class="zebra-table">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th class="c">Item Terjual</th>
+              <th class="c">Penjualan Kotor</th>
+              <th class="c">Penjualan Bersih</th>
+              <th class="c">Laba Kotor</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Ayran</td><td class="c">209</td><td><div class="rp-cell"><span>Rp.</span><span>9.405.000</span></div></td><td><div class="rp-cell"><span>Rp.</span><span>9.202.500</span></div></td><td><div class="rp-cell"><span>Rp.</span><span>9.202.500</span></div></td></tr>
+            <tr><td>Soft drink</td><td class="c">161</td><td><div class="rp-cell"><span>Rp.</span><span>4.025.000</span></div></td><td><div class="rp-cell"><span>Rp.</span><span>3.992.500</span></div></td><td><div class="rp-cell"><span>Rp.</span><span>3.992.500</span></div></td></tr>
+            <tr><td>Still water</td><td class="c">144</td><td><div class="rp-cell"><span>Rp.</span><span>4.320.000</span></div></td><td><div class="rp-cell"><span>Rp.</span><span>4.222.500</span></div></td><td><div class="rp-cell"><span>Rp.</span><span>4.222.500</span></div></td></tr>
+            <tr><td>Bread</td><td class="c">92</td><td><div class="rp-cell"><span>Rp.</span><span>1.564.000</span></div></td><td><div class="rp-cell"><span>Rp.</span><span>1.556.350</span></div></td><td><div class="rp-cell"><span>Rp.</span><span>1.556.350</span></div></td></tr>
+            <tr><td>Lentil soup</td><td class="c">80</td><td><div class="rp-cell"><span>Rp.</span><span>5.200.000</span></div></td><td><div class="rp-cell"><span>Rp.</span><span>5.063.500</span></div></td><td><div class="rp-cell"><span>Rp.</span><span>5.063.500</span></div></td></tr>
+            <tr><td>Lahmacun</td><td class="c">75</td><td><div class="rp-cell"><span>Rp.</span><span>10.125.000</span></div></td><td><div class="rp-cell"><span>Rp.</span><span>9.720.000</span></div></td><td><div class="rp-cell"><span>Rp.</span><span>9.720.000</span></div></td></tr>
+            <tr><td>Manti</td><td class="c">75</td><td><div class="rp-cell"><span>Rp.</span><span>10.125.000</span></div></td><td><div class="rp-cell"><span>Rp.</span><span>9.936.000</span></div></td><td><div class="rp-cell"><span>Rp.</span><span>9.936.000</span></div></td></tr>
+            <tr><td>Juice</td><td class="c">71</td><td><div class="rp-cell"><span>Rp.</span><span>3.195.000</span></div></td><td><div class="rp-cell"><span>Rp.</span><span>3.168.000</span></div></td><td><div class="rp-cell"><span>Rp.</span><span>3.168.000</span></div></td></tr>
+            <tr><td>turkish cofee</td><td class="c">59</td><td><div class="rp-cell"><span>Rp.</span><span>2.655.000</span></div></td><td><div class="rp-cell"><span>Rp.</span><span>2.628.000</span></div></td><td><div class="rp-cell"><span>Rp.</span><span>2.628.000</span></div></td></tr>
+            <tr><td>potato gozleme</td><td class="c">53</td><td><div class="rp-cell"><span>Rp.</span><span>5.830.000</span></div></td><td><div class="rp-cell"><span>Rp.</span><span>5.786.000</span></div></td><td><div class="rp-cell"><span>Rp.</span><span>5.786.000</span></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- DASHBOARD: PERBANDINGAN OUTLET -->
+  <main id="view-dashboard-compare" class="page-view">
+    <div class="top-header"><h2 class="page-title">Dashboard</h2></div>
+    <div class="mode-tabs" style="margin-bottom:20px">
+      <a href="#view-dashboard" class="mode-tab">Ringkasan</a>
+      <a href="#view-dashboard-compare" class="mode-tab active">Perbandingan Outlet</a>
+    </div>
+    <div class="settings-card" style="max-width:520px;text-align:center;margin:40px auto">
+      <h3>Feature is not available</h3>
+      <p style="color:#666;line-height:1.6">Outlet Comparison is available for Merchants with 2 outlets or more.</p>
+    </div>
+  </main>
+
+  <!-- =================================================================== -->
+  <!-- 2. REPORTS > SALES > ITEM SALES (DEFAULT VIEW)                      -->
+  <!-- =================================================================== -->
+  <main id="view-item-sales" class="page-view">
+      <div class="top-header">
+        <h2 class="page-title">Sales</h2>
+        <button type="button" class="btn-export"><span>Export</span><span style="font-size:10px">&#9662;</span></button>
+      </div>
+      <div class="filter-bar">
+        <div class="outlet-box">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="#888"><path d="M4 7l1-3h14l1 3v2H4V7zm1 4h14v9h-4v-6H9v6H5v-9z"/></svg>
+          <span>demo acount</span>
+        </div>
+        <div class="date-group">
+          <button type="button" class="date-arrow left">&#10094;</button>
+          <button type="button" class="date-display"><span>1/10/2026 - 31/10/2026</span><span style="font-size:11px;color:#666">&#8964;</span></button>
+          <button type="button" class="date-arrow right">&#10095;</button>
+        </div>
+      </div>
+    <div class="report-body">
+        <nav class="report-subnav">
+          <a href="#view-sales-summary" class="subnav-pill">Sales Summary</a>
+          <a href="#view-gross-profit" class="subnav-pill">Gross Profit</a>
+          <a href="#view-payment-methods" class="subnav-pill">Payment Methods</a>
+          <a href="#view-sales-type" class="subnav-pill">Sales Type</a>
+          <a href="#view-item-sales" class="subnav-pill active">Item Sales</a>
+          <a href="#view-category-sales" class="subnav-pill">Category Sales</a>
+          <a href="#view-brand-sales" class="subnav-pill">Brand Sales</a>
+          <a href="#view-modifier-sales" class="subnav-pill">Modifier Sales</a>
+          <a href="#view-discounts-report" class="subnav-pill">Discounts</a>
+          <a href="#view-taxes-report" class="subnav-pill">Taxes</a>
+          <a href="#view-gratuity-report" class="subnav-pill">Gratuity</a>
+          <a href="#view-collected-by" class="subnav-pill">Collected By</a>
+          <a href="#view-served-by" class="subnav-pill">Served By</a>
+        </nav>
+
+      <section class="report-pane">
+        <div class="mode-tabs">
+          <div class="mode-tab active">Income</div>
+          <div class="mode-tab">Quantity</div>
+        </div>
+        <p class="report-desc">See how a la carte items and bundle packages contribute to the profit and margin for your business.</p>
+        <div class="table-wrap">
+          <table class="wide-table">
+            <thead>
+              <tr>
+                <th class="sticky-col sort-up">Name</th>
+                <th class="sort-down">SKU</th>
+                <th class="sort-up">Category</th>
+                <th class="r sort-up">Item Sold <i class="info-dot">i</i></th>
+                <th class="r sort-up">Item Refunded <i class="info-dot">i</i></th>
+                <th class="r sort-up">Gross Sales</th>
+                <th class="r sort-up">Discounts</th>
+                <th class="r sort-up">Refund</th>
+                <th class="r sort-up">Net Sales</th>
+                <th class="r sort-up">COGS <i class="info-dot">i</i></th>
+                <th class="r sort-up">Gross Profit <i class="info-dot">i</i></th>
+                <th class="r sort-up">Gross Margin <i class="info-dot">i</i></th>
+              </tr>
+            </thead>
+            <tbody>
+                  <tr><td class="sticky-col">1/2 lentil soup</td><td></td><td>Extra</td><td class="r">7</td><td class="r"></td><td class="r">Rp. 227.500</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 227.500</td><td class="r">Rp. 0</td><td class="r">Rp. 227.500</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">1/2chiken</td><td></td><td>Extra</td><td class="r">1</td><td class="r"></td><td class="r">Rp. 40.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 40.000</td><td class="r">Rp. 0</td><td class="r">Rp. 40.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">100+</td><td></td><td>Drink</td><td class="r">2</td><td class="r"></td><td class="r">Rp. 70.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 70.000</td><td class="r">Rp. 0</td><td class="r">Rp. 70.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Adana kebab beff</td><td></td><td>Kebab</td><td class="r">53</td><td class="r"></td><td class="r">Rp. 7.155.000</td><td class="r">(Rp. 60.750)</td><td class="r">Rp. 0</td><td class="r">Rp. 7.094.250</td><td class="r">Rp. 0</td><td class="r">Rp. 7.094.250</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Adana kebab chiken</td><td></td><td>Kebab</td><td class="r">16</td><td class="r"></td><td class="r">Rp. 2.000.000</td><td class="r">(Rp. 25.000)</td><td class="r">Rp. 0</td><td class="r">Rp. 1.975.000</td><td class="r">Rp. 0</td><td class="r">Rp. 1.975.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Adana kebab lamb</td><td></td><td>Kebab</td><td class="r">21</td><td class="r"></td><td class="r">Rp. 3.045.000</td><td class="r">(Rp. 43.500)</td><td class="r">Rp. 0</td><td class="r">Rp. 3.001.500</td><td class="r">Rp. 0</td><td class="r">Rp. 3.001.500</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Artichoke</td><td></td><td>Extra</td><td class="r">2</td><td class="r"></td><td class="r">Rp. 100.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 100.000</td><td class="r">Rp. 0</td><td class="r">Rp. 100.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Ayran</td><td></td><td>Drink</td><td class="r">209</td><td class="r">3</td><td class="r">Rp. 9.405.000</td><td class="r">(Rp. 67.500)</td><td class="r">(Rp. 135.000)</td><td class="r">Rp. 9.202.500</td><td class="r">Rp. 0</td><td class="r">Rp. 9.202.500</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Babbaganous</td><td></td><td>Mezze</td><td class="r">23</td><td class="r"></td><td class="r">Rp. 1.380.000</td><td class="r">(Rp. 87.000)</td><td class="r">Rp. 0</td><td class="r">Rp. 1.293.000</td><td class="r">Rp. 0</td><td class="r">Rp. 1.293.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Bagel with sesame</td><td></td><td>Dessert</td><td class="r">1</td><td class="r"></td><td class="r">Rp. 24.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 24.000</td><td class="r">Rp. 0</td><td class="r">Rp. 24.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Baklava</td><td></td><td>Dessert</td><td class="r">21</td><td class="r"></td><td class="r">Rp. 2.625.000</td><td class="r">(Rp. 6.250)</td><td class="r">Rp. 0</td><td class="r">Rp. 2.618.750</td><td class="r">Rp. 0</td><td class="r">Rp. 2.618.750</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Basmati rice</td><td></td><td>Extra</td><td class="r">4</td><td class="r"></td><td class="r">Rp. 200.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 200.000</td><td class="r">Rp. 0</td><td class="r">Rp. 200.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Bread</td><td></td><td>Extra</td><td class="r">92</td><td class="r"></td><td class="r">Rp. 1.564.000</td><td class="r">(Rp. 7.650)</td><td class="r">Rp. 0</td><td class="r">Rp. 1.556.350</td><td class="r">Rp. 0</td><td class="r">Rp. 1.556.350</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Bulgur rice</td><td></td><td>Extra</td><td class="r">14</td><td class="r"></td><td class="r">Rp. 770.000</td><td class="r">(Rp. 5.500)</td><td class="r">Rp. 0</td><td class="r">Rp. 764.500</td><td class="r">Rp. 0</td><td class="r">Rp. 764.500</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Cacik</td><td></td><td>Mezze</td><td class="r">25</td><td class="r"></td><td class="r">Rp. 1.375.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 1.375.000</td><td class="r">Rp. 0</td><td class="r">Rp. 1.375.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Cay pot</td><td></td><td>Drink</td><td class="r">1</td><td class="r"></td><td class="r">Rp. 35.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 35.000</td><td class="r">Rp. 0</td><td class="r">Rp. 35.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Chesee gozleme</td><td></td><td>Pide &amp; Gozleme</td><td class="r">16</td><td class="r"></td><td class="r">Rp. 2.000.000</td><td class="r">(Rp. 12.500)</td><td class="r">Rp. 0</td><td class="r">Rp. 1.987.500</td><td class="r">Rp. 0</td><td class="r">Rp. 1.987.500</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Chicken Thing</td><td></td><td>Kebab</td><td class="r">5</td><td class="r"></td><td class="r">Rp. 775.000</td><td class="r">(Rp. 23.250)</td><td class="r">Rp. 0</td><td class="r">Rp. 751.750</td><td class="r">Rp. 0</td><td class="r">Rp. 751.750</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Chicken Wings</td><td></td><td>Kebab</td><td class="r">37</td><td class="r">2</td><td class="r">Rp. 4.995.000</td><td class="r">(Rp. 128.250)</td><td class="r">(Rp. 270.000)</td><td class="r">Rp. 4.596.750</td><td class="r">Rp. 0</td><td class="r">Rp. 4.596.750</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Chicken sharma</td><td></td><td>Kebab</td><td class="r">19</td><td class="r"></td><td class="r">Rp. 1.805.000</td><td class="r">(Rp. 4.750)</td><td class="r">Rp. 0</td><td class="r">Rp. 1.800.250</td><td class="r">Rp. 0</td><td class="r">Rp. 1.800.250</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Chiken shawarma</td><td></td><td>Kebab</td><td class="r">14</td><td class="r"></td><td class="r">Rp. 1.330.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 1.330.000</td><td class="r">Rp. 0</td><td class="r">Rp. 1.330.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Coban salad</td><td></td><td>Salad</td><td class="r">41</td><td class="r"></td><td class="r">Rp. 2.665.000</td><td class="r">(Rp. 65.000)</td><td class="r">Rp. 0</td><td class="r">Rp. 2.600.000</td><td class="r">Rp. 0</td><td class="r">Rp. 2.600.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Cream cheese</td><td></td><td>Extra</td><td class="r">1</td><td class="r"></td><td class="r">Rp. 40.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 40.000</td><td class="r">Rp. 0</td><td class="r">Rp. 40.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Custom Amount</td><td></td><td>Uncategorized</td><td class="r">8</td><td class="r"></td><td class="r">Rp. 380.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 380.000</td><td class="r">Rp. 0</td><td class="r">Rp. 380.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Doner beef</td><td></td><td>Kebab</td><td class="r">27</td><td class="r"></td><td class="r">Rp. 4.725.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 4.725.000</td><td class="r">Rp. 0</td><td class="r">Rp. 4.725.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Durum beff</td><td></td><td>Kebab</td><td class="r">15</td><td class="r">1</td><td class="r">Rp. 2.025.000</td><td class="r">Rp. 0</td><td class="r">(Rp. 135.000)</td><td class="r">Rp. 1.890.000</td><td class="r">Rp. 0</td><td class="r">Rp. 1.890.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Falafel</td><td></td><td>Mezze</td><td class="r">9</td><td class="r"></td><td class="r">Rp. 675.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 675.000</td><td class="r">Rp. 0</td><td class="r">Rp. 675.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Falafel roll</td><td></td><td>Kebab</td><td class="r">5</td><td class="r"></td><td class="r">Rp. 475.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 475.000</td><td class="r">Rp. 0</td><td class="r">Rp. 475.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Feta cheese</td><td></td><td>Extra</td><td class="r">2</td><td class="r"></td><td class="r">Rp. 70.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 70.000</td><td class="r">Rp. 0</td><td class="r">Rp. 70.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Frenchfries</td><td></td><td>Extra</td><td class="r">27</td><td class="r"></td><td class="r">Rp. 945.000</td><td class="r">(Rp. 10.500)</td><td class="r">Rp. 0</td><td class="r">Rp. 934.500</td><td class="r">Rp. 0</td><td class="r">Rp. 934.500</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Halloumi Cheese</td><td></td><td>Extra</td><td class="r">10</td><td class="r"></td><td class="r">Rp. 650.000</td><td class="r">(Rp. 6.500)</td><td class="r">Rp. 0</td><td class="r">Rp. 643.500</td><td class="r">Rp. 0</td><td class="r">Rp. 643.500</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Halva</td><td></td><td>Dessert</td><td class="r">9</td><td class="r"></td><td class="r">Rp. 675.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 675.000</td><td class="r">Rp. 0</td><td class="r">Rp. 675.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Humus</td><td></td><td>Mezze</td><td class="r">18</td><td class="r"></td><td class="r">Rp. 1.080.000</td><td class="r">(Rp. 9.000)</td><td class="r">Rp. 0</td><td class="r">Rp. 1.071.000</td><td class="r">Rp. 0</td><td class="r">Rp. 1.071.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Ice lemon tea</td><td></td><td>Uncategorized</td><td class="r">3</td><td class="r"></td><td class="r">Rp. 90.000</td><td class="r">(Rp. 1.500)</td><td class="r">Rp. 0</td><td class="r">Rp. 88.500</td><td class="r">Rp. 0</td><td class="r">Rp. 88.500</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Ice tea</td><td></td><td>Drink</td><td class="r">2</td><td class="r"></td><td class="r">Rp. 50.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 50.000</td><td class="r">Rp. 0</td><td class="r">Rp. 50.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Ispanakli pide</td><td></td><td>Pide &amp; Gozleme</td><td class="r">12</td><td class="r"></td><td class="r">Rp. 1.440.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 1.440.000</td><td class="r">Rp. 0</td><td class="r">Rp. 1.440.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Juice</td><td></td><td>Drink</td><td class="r">71</td><td class="r"></td><td class="r">Rp. 3.195.000</td><td class="r">(Rp. 27.000)</td><td class="r">Rp. 0</td><td class="r">Rp. 3.168.000</td><td class="r">Rp. 0</td><td class="r">Rp. 3.168.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Kalamata olive</td><td></td><td>Extra</td><td class="r">8</td><td class="r"></td><td class="r">Rp. 360.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 360.000</td><td class="r">Rp. 0</td><td class="r">Rp. 360.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Kavurma Durum</td><td></td><td>Kebab</td><td class="r">2</td><td class="r"></td><td class="r">Rp. 300.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 300.000</td><td class="r">Rp. 0</td><td class="r">Rp. 300.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Kavurmali Yumurta</td><td></td><td>Breakfast</td><td class="r">13</td><td class="r"></td><td class="r">Rp. 1.235.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 1.235.000</td><td class="r">Rp. 0</td><td class="r">Rp. 1.235.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Kiymali pide</td><td></td><td>Pide &amp; Gozleme</td><td class="r">28</td><td class="r">1</td><td class="r">Rp. 4.060.000</td><td class="r">(Rp. 7.250)</td><td class="r">(Rp. 145.000)</td><td class="r">Rp. 3.907.750</td><td class="r">Rp. 0</td><td class="r">Rp. 3.907.750</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Lahmacun</td><td></td><td>Pide &amp; Gozleme</td><td class="r">75</td><td class="r">1</td><td class="r">Rp. 10.125.000</td><td class="r">(Rp. 270.000)</td><td class="r">(Rp. 135.000)</td><td class="r">Rp. 9.720.000</td><td class="r">Rp. 0</td><td class="r">Rp. 9.720.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Lamb shank</td><td></td><td>Kebab</td><td class="r">2</td><td class="r"></td><td class="r">Rp. 630.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 630.000</td><td class="r">Rp. 0</td><td class="r">Rp. 630.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Lemonade</td><td></td><td>Drink</td><td class="r">12</td><td class="r"></td><td class="r">Rp. 660.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 660.000</td><td class="r">Rp. 0</td><td class="r">Rp. 660.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Lentil soup</td><td></td><td>Soup</td><td class="r">80</td><td class="r">2</td><td class="r">Rp. 5.200.000</td><td class="r">(Rp. 6.500)</td><td class="r">(Rp. 130.000)</td><td class="r">Rp. 5.063.500</td><td class="r">Rp. 0</td><td class="r">Rp. 5.063.500</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Manti</td><td></td><td>Kebab</td><td class="r">75</td><td class="r">1</td><td class="r">Rp. 10.125.000</td><td class="r">(Rp. 54.000)</td><td class="r">(Rp. 135.000)</td><td class="r">Rp. 9.936.000</td><td class="r">Rp. 0</td><td class="r">Rp. 9.936.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Menemen</td><td></td><td>Breakfast</td><td class="r">49</td><td class="r"></td><td class="r">Rp. 4.900.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 4.900.000</td><td class="r">Rp. 0</td><td class="r">Rp. 4.900.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Mix grill</td><td></td><td>Kebab</td><td class="r">37</td><td class="r"></td><td class="r">Rp. 9.065.000</td><td class="r">(Rp. 245.000)</td><td class="r">Rp. 0</td><td class="r">Rp. 8.820.000</td><td class="r">Rp. 0</td><td class="r">Rp. 8.820.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Mix mezze</td><td></td><td>Mezze</td><td class="r">23</td><td class="r"></td><td class="r">Rp. 3.335.000</td><td class="r">(Rp. 166.750)</td><td class="r">Rp. 0</td><td class="r">Rp. 3.168.250</td><td class="r">Rp. 0</td><td class="r">Rp. 3.168.250</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Mix pickles</td><td></td><td>Extra</td><td class="r">3</td><td class="r"></td><td class="r">Rp. 165.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 165.000</td><td class="r">Rp. 0</td><td class="r">Rp. 165.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Muttabel</td><td></td><td>Mezze</td><td class="r">11</td><td class="r"></td><td class="r">Rp. 715.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 715.000</td><td class="r">Rp. 0</td><td class="r">Rp. 715.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Peynerli pide</td><td></td><td>Pide &amp; Gozleme</td><td class="r">14</td><td class="r"></td><td class="r">Rp. 1.750.000</td><td class="r">(Rp. 20.000)</td><td class="r">Rp. 0</td><td class="r">Rp. 1.730.000</td><td class="r">Rp. 0</td><td class="r">Rp. 1.730.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Pilav us kavurma</td><td></td><td>Kebab</td><td class="r">17</td><td class="r"></td><td class="r">Rp. 2.550.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 2.550.000</td><td class="r">Rp. 0</td><td class="r">Rp. 2.550.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Pumkin</td><td></td><td>Dessert</td><td class="r">9</td><td class="r"></td><td class="r">Rp. 810.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 810.000</td><td class="r">Rp. 0</td><td class="r">Rp. 810.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Salad breakfest</td><td></td><td>Breakfast</td><td class="r">2</td><td class="r"></td><td class="r">Rp. 70.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 70.000</td><td class="r">Rp. 0</td><td class="r">Rp. 70.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Scrambel egg</td><td></td><td>Breakfast</td><td class="r">2</td><td class="r"></td><td class="r">Rp. 70.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 70.000</td><td class="r">Rp. 0</td><td class="r">Rp. 70.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Set breakfast menu</td><td></td><td>Breakfast</td><td class="r">44</td><td class="r"></td><td class="r">Rp. 9.680.000</td><td class="r">(Rp. 154.000)</td><td class="r">Rp. 0</td><td class="r">Rp. 9.526.000</td><td class="r">Rp. 0</td><td class="r">Rp. 9.526.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Sish kebab beef</td><td></td><td>Kebab</td><td class="r">8</td><td class="r"></td><td class="r">Rp. 1.400.000</td><td class="r">(Rp. 17.500)</td><td class="r">Rp. 0</td><td class="r">Rp. 1.382.500</td><td class="r">Rp. 0</td><td class="r">Rp. 1.382.500</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Sish kebab chiken</td><td></td><td>Kebab</td><td class="r">30</td><td class="r"></td><td class="r">Rp. 4.520.000</td><td class="r">(Rp. 72.500)</td><td class="r">Rp. 0</td><td class="r">Rp. 4.447.500</td><td class="r">Rp. 0</td><td class="r">Rp. 4.447.500</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Sish kebab lamb</td><td></td><td>Kebab</td><td class="r">8</td><td class="r"></td><td class="r">Rp. 1.480.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 1.480.000</td><td class="r">Rp. 0</td><td class="r">Rp. 1.480.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Smooties</td><td></td><td>Drink</td><td class="r">4</td><td class="r"></td><td class="r">Rp. 200.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 200.000</td><td class="r">Rp. 0</td><td class="r">Rp. 200.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Soft drink</td><td></td><td>Drink</td><td class="r">161</td><td class="r">1</td><td class="r">Rp. 4.025.000</td><td class="r">(Rp. 7.500)</td><td class="r">(Rp. 25.000)</td><td class="r">Rp. 3.992.500</td><td class="r">Rp. 0</td><td class="r">Rp. 3.992.500</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Sparkling water</td><td></td><td>Drink</td><td class="r">18</td><td class="r"></td><td class="r">Rp. 630.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 630.000</td><td class="r">Rp. 0</td><td class="r">Rp. 630.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Spinach gozleme</td><td></td><td>Pide &amp; Gozleme</td><td class="r">19</td><td class="r"></td><td class="r">Rp. 2.185.000</td><td class="r">(Rp. 11.500)</td><td class="r">Rp. 0</td><td class="r">Rp. 2.173.500</td><td class="r">Rp. 0</td><td class="r">Rp. 2.173.500</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Still water</td><td></td><td>Drink</td><td class="r">144</td><td class="r">1</td><td class="r">Rp. 4.320.000</td><td class="r">(Rp. 67.500)</td><td class="r">(Rp. 30.000)</td><td class="r">Rp. 4.222.500</td><td class="r">Rp. 0</td><td class="r">Rp. 4.222.500</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Sucuklu Yumurta</td><td></td><td>Breakfast</td><td class="r">11</td><td class="r"></td><td class="r">Rp. 1.155.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 1.155.000</td><td class="r">Rp. 0</td><td class="r">Rp. 1.155.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Tabbouleh salad</td><td></td><td>Salad</td><td class="r">13</td><td class="r"></td><td class="r">Rp. 1.105.000</td><td class="r">(Rp. 21.250)</td><td class="r">Rp. 0</td><td class="r">Rp. 1.083.750</td><td class="r">Rp. 0</td><td class="r">Rp. 1.083.750</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Tarator</td><td></td><td>Mezze</td><td class="r">14</td><td class="r"></td><td class="r">Rp. 840.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 840.000</td><td class="r">Rp. 0</td><td class="r">Rp. 840.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Turkish Eggs</td><td></td><td>Breakfast</td><td class="r">9</td><td class="r"></td><td class="r">Rp. 990.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 990.000</td><td class="r">Rp. 0</td><td class="r">Rp. 990.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Yaglama</td><td></td><td>Kebab</td><td class="r">33</td><td class="r"></td><td class="r">Rp. 6.435.000</td><td class="r">(Rp. 224.250)</td><td class="r">Rp. 0</td><td class="r">Rp. 6.210.750</td><td class="r">Rp. 0</td><td class="r">Rp. 6.210.750</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Yaprak Sarma</td><td></td><td>Kebab</td><td class="r">22</td><td class="r"></td><td class="r">Rp. 2.310.000</td><td class="r">(Rp. 105.000)</td><td class="r">Rp. 0</td><td class="r">Rp. 2.205.000</td><td class="r">Rp. 0</td><td class="r">Rp. 2.205.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">Yogurt</td><td></td><td>Extra</td><td class="r">13</td><td class="r"></td><td class="r">Rp. 455.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 455.000</td><td class="r">Rp. 0</td><td class="r">Rp. 455.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">acili ezme</td><td></td><td>Mezze</td><td class="r">21</td><td class="r"></td><td class="r">Rp. 945.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 945.000</td><td class="r">Rp. 0</td><td class="r">Rp. 945.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">adana beff</td><td></td><td>only sish</td><td class="r">3</td><td class="r"></td><td class="r">Rp. 345.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 345.000</td><td class="r">Rp. 0</td><td class="r">Rp. 345.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">adana beff skewer</td><td></td><td>Uncategorized</td><td class="r">2</td><td class="r"></td><td class="r">Rp. 230.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 230.000</td><td class="r">Rp. 0</td><td class="r">Rp. 230.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">adana chicken</td><td></td><td>only sish</td><td class="r">1</td><td class="r"></td><td class="r">Rp. 95.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 95.000</td><td class="r">Rp. 0</td><td class="r">Rp. 95.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">adana chiken sish</td><td></td><td>Kebab</td><td class="r">5</td><td class="r"></td><td class="r">Rp. 475.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 475.000</td><td class="r">Rp. 0</td><td class="r">Rp. 475.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">adana lamb</td><td></td><td>only sish</td><td class="r">5</td><td class="r"></td><td class="r">Rp. 675.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 675.000</td><td class="r">Rp. 0</td><td class="r">Rp. 675.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">beef sish</td><td></td><td>only sish</td><td class="r">5</td><td class="r"></td><td class="r">Rp. 625.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 625.000</td><td class="r">Rp. 0</td><td class="r">Rp. 625.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">berry nice</td><td></td><td>Smooties bowls</td><td class="r">1</td><td class="r"></td><td class="r">Rp. 80.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 80.000</td><td class="r">Rp. 0</td><td class="r">Rp. 80.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">chicken wings</td><td></td><td>only sish</td><td class="r">2</td><td class="r"></td><td class="r">Rp. 210.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 210.000</td><td class="r">Rp. 0</td><td class="r">Rp. 210.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">chiken sish</td><td></td><td>only sish</td><td class="r">21</td><td class="r"></td><td class="r">Rp. 2.205.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 2.205.000</td><td class="r">Rp. 0</td><td class="r">Rp. 2.205.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">chikofte</td><td></td><td>Kebab</td><td class="r">28</td><td class="r">1</td><td class="r">Rp. 3.500.000</td><td class="r">(Rp. 18.750)</td><td class="r">(Rp. 125.000)</td><td class="r">Rp. 3.356.250</td><td class="r">Rp. 0</td><td class="r">Rp. 3.356.250</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">durum chiken</td><td></td><td>Kebab</td><td class="r">7</td><td class="r"></td><td class="r">Rp. 875.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 875.000</td><td class="r">Rp. 0</td><td class="r">Rp. 875.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">durum lamb</td><td></td><td>Kebab</td><td class="r">5</td><td class="r"></td><td class="r">Rp. 725.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 725.000</td><td class="r">Rp. 0</td><td class="r">Rp. 725.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">egg</td><td></td><td>Extra</td><td class="r">2</td><td class="r"></td><td class="r">Rp. 30.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 30.000</td><td class="r">Rp. 0</td><td class="r">Rp. 30.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">ice lemon tea</td><td></td><td>Drink</td><td class="r">3</td><td class="r"></td><td class="r">Rp. 90.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 90.000</td><td class="r">Rp. 0</td><td class="r">Rp. 90.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">icli kofte</td><td></td><td>Extra</td><td class="r">25</td><td class="r"></td><td class="r">Rp. 2.500.000</td><td class="r">(Rp. 130.000)</td><td class="r">Rp. 0</td><td class="r">Rp. 2.370.000</td><td class="r">Rp. 0</td><td class="r">Rp. 2.370.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">kavurmali no egg</td><td></td><td>Extra</td><td class="r">2</td><td class="r"></td><td class="r">Rp. 160.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 160.000</td><td class="r">Rp. 0</td><td class="r">Rp. 160.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">lamb sish</td><td></td><td>only sish</td><td class="r">9</td><td class="r"></td><td class="r">Rp. 1.215.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 1.215.000</td><td class="r">Rp. 0</td><td class="r">Rp. 1.215.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">picles chili</td><td></td><td>Extra</td><td class="r">8</td><td class="r"></td><td class="r">Rp. 120.000</td><td class="r">(Rp. 750)</td><td class="r">Rp. 0</td><td class="r">Rp. 119.250</td><td class="r">Rp. 0</td><td class="r">Rp. 119.250</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">potato gozleme</td><td></td><td>Pide &amp; Gozleme</td><td class="r">53</td><td class="r"></td><td class="r">Rp. 5.830.000</td><td class="r">(Rp. 44.000)</td><td class="r">Rp. 0</td><td class="r">Rp. 5.786.000</td><td class="r">Rp. 0</td><td class="r">Rp. 5.786.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">sigara borek</td><td></td><td>Mezze</td><td class="r">31</td><td class="r"></td><td class="r">Rp. 2.015.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 2.015.000</td><td class="r">Rp. 0</td><td class="r">Rp. 2.015.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">soda water</td><td></td><td>Drink</td><td class="r">9</td><td class="r"></td><td class="r">Rp. 270.000</td><td class="r">(Rp. 1.500)</td><td class="r">Rp. 0</td><td class="r">Rp. 268.500</td><td class="r">Rp. 0</td><td class="r">Rp. 268.500</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">sucuk</td><td></td><td>Extra</td><td class="r">2</td><td class="r"></td><td class="r">Rp. 140.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 140.000</td><td class="r">Rp. 0</td><td class="r">Rp. 140.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">terbiyeli corba</td><td></td><td>Soup</td><td class="r">9</td><td class="r"></td><td class="r">Rp. 945.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 945.000</td><td class="r">Rp. 0</td><td class="r">Rp. 945.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">turkish cofee</td><td></td><td>Drink</td><td class="r">59</td><td class="r"></td><td class="r">Rp. 2.655.000</td><td class="r">(Rp. 27.000)</td><td class="r">Rp. 0</td><td class="r">Rp. 2.628.000</td><td class="r">Rp. 0</td><td class="r">Rp. 2.628.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">watermelon</td><td></td><td>Extra</td><td class="r">1</td><td class="r"></td><td class="r">Rp. 65.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 65.000</td><td class="r">Rp. 0</td><td class="r">Rp. 65.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">yellowish</td><td></td><td>Smooties bowls</td><td class="r">2</td><td class="r"></td><td class="r">Rp. 160.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 160.000</td><td class="r">Rp. 0</td><td class="r">Rp. 160.000</td><td class="r">100%</td></tr>
+                  <tr><td class="sticky-col">demo salad</td><td></td><td>Salad</td><td class="r">6</td><td class="r"></td><td class="r">Rp. 450.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 450.000</td><td class="r">Rp. 0</td><td class="r">Rp. 450.000</td><td class="r">100%</td></tr>
+            </tbody>
+            <tfoot>
+                  <tr><td class="sticky-col">Total</td><td></td><td></td><td class="r">2183</td><td class="r">14</td><td class="r">Rp. 185.585.500</td><td class="r">(Rp. 2.263.900)</td><td class="r">(Rp. 1.265.000)</td><td class="r">Rp. 182.056.600</td><td class="r">Rp. 0</td><td class="r">Rp. 182.056.600</td><td class="r">100%</td></tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- =================================================================== -->
+  <!-- 3. REPORTS > SALES > SALES SUMMARY                                  -->
+  <!-- =================================================================== -->
+  <main id="view-sales-summary" class="page-view">
+      <div class="top-header">
+        <h2 class="page-title">Sales</h2>
+        <button type="button" class="btn-export"><span>Export</span><span style="font-size:10px">&#9662;</span></button>
+      </div>
+      <div class="filter-bar">
+        <div class="outlet-box">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="#888"><path d="M4 7l1-3h14l1 3v2H4V7zm1 4h14v9h-4v-6H9v6H5v-9z"/></svg>
+          <span>demo acount</span>
+        </div>
+        <div class="date-group">
+          <button type="button" class="date-arrow left">&#10094;</button>
+          <button type="button" class="date-display"><span>1/10/2026 - 31/10/2026</span><span style="font-size:11px;color:#666">&#8964;</span></button>
+          <button type="button" class="date-arrow right">&#10095;</button>
+        </div>
+      </div>
+    <div class="report-body">
+        <nav class="report-subnav">
+          <a href="#view-sales-summary" class="subnav-pill active">Sales Summary</a>
+          <a href="#view-gross-profit" class="subnav-pill">Gross Profit</a>
+          <a href="#view-payment-methods" class="subnav-pill">Payment Methods</a>
+          <a href="#view-sales-type" class="subnav-pill">Sales Type</a>
+          <a href="#view-item-sales" class="subnav-pill">Item Sales</a>
+          <a href="#view-category-sales" class="subnav-pill">Category Sales</a>
+          <a href="#view-brand-sales" class="subnav-pill">Brand Sales</a>
+          <a href="#view-modifier-sales" class="subnav-pill">Modifier Sales</a>
+          <a href="#view-discounts-report" class="subnav-pill">Discounts</a>
+          <a href="#view-taxes-report" class="subnav-pill">Taxes</a>
+          <a href="#view-gratuity-report" class="subnav-pill">Gratuity</a>
+          <a href="#view-collected-by" class="subnav-pill">Collected By</a>
+          <a href="#view-served-by" class="subnav-pill">Served By</a>
+        </nav>
+
+      <section class="report-pane">
+        <div class="summary-list-card">
+          <div class="summary-row"><span>Gross Sales</span><span>Rp. 185.585.500</span></div>
+          <div class="summary-row"><span>Discounts</span><span>(Rp. 2.263.900)</span></div>
+          <div class="summary-row"><span>Refunds</span><span>(Rp. 1.265.000)</span></div>
+          <div class="summary-row bold"><span>Net Sales</span><span>Rp. 182.056.600</span></div>
+          <div class="summary-row"><span>Gratuity</span><span>Rp. 9.102.830</span></div>
+          <div class="summary-row"><span>Tax</span><span>Rp. 19.115.943</span></div>
+          <div class="summary-row"><span>Rounding</span><span>Rp. 0</span></div>
+          <div class="summary-row bold"><span>Total Collected</span><span>Rp. 210.275.373</span></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- =================================================================== -->
+  <!-- 4. REPORTS > SALES > GROSS PROFIT                                   -->
+  <!-- =================================================================== -->
+  <main id="view-gross-profit" class="page-view">
+      <div class="top-header">
+        <h2 class="page-title">Sales</h2>
+        <button type="button" class="btn-export"><span>Export</span><span style="font-size:10px">&#9662;</span></button>
+      </div>
+      <div class="filter-bar">
+        <div class="outlet-box">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="#888"><path d="M4 7l1-3h14l1 3v2H4V7zm1 4h14v9h-4v-6H9v6H5v-9z"/></svg>
+          <span>demo acount</span>
+        </div>
+        <div class="date-group">
+          <button type="button" class="date-arrow left">&#10094;</button>
+          <button type="button" class="date-display"><span>1/10/2026 - 31/10/2026</span><span style="font-size:11px;color:#666">&#8964;</span></button>
+          <button type="button" class="date-arrow right">&#10095;</button>
+        </div>
+      </div>
+    <div class="report-body">
+        <nav class="report-subnav">
+          <a href="#view-sales-summary" class="subnav-pill">Sales Summary</a>
+          <a href="#view-gross-profit" class="subnav-pill active">Gross Profit</a>
+          <a href="#view-payment-methods" class="subnav-pill">Payment Methods</a>
+          <a href="#view-sales-type" class="subnav-pill">Sales Type</a>
+          <a href="#view-item-sales" class="subnav-pill">Item Sales</a>
+          <a href="#view-category-sales" class="subnav-pill">Category Sales</a>
+          <a href="#view-brand-sales" class="subnav-pill">Brand Sales</a>
+          <a href="#view-modifier-sales" class="subnav-pill">Modifier Sales</a>
+          <a href="#view-discounts-report" class="subnav-pill">Discounts</a>
+          <a href="#view-taxes-report" class="subnav-pill">Taxes</a>
+          <a href="#view-gratuity-report" class="subnav-pill">Gratuity</a>
+          <a href="#view-collected-by" class="subnav-pill">Collected By</a>
+          <a href="#view-served-by" class="subnav-pill">Served By</a>
+        </nav>
+
+      <section class="report-pane">
+        <p class="report-desc">Gross Profit is your Net Sales minus Cost of Goods Sold (COGS). To report Gross Profit accurately, please make sure all items have an accurate COGS.</p>
+        <div class="summary-list-card">
+          <div class="summary-row"><span>Gross Sales</span><span>Rp. 185.585.500</span></div>
+          <div class="summary-row"><span>Discounts</span><span>(Rp. 2.263.900)</span></div>
+          <div class="summary-row"><span>Refunds</span><span>(Rp. 1.265.000)</span></div>
+          <div class="summary-row bold"><span>Net Sales</span><span>Rp. 182.056.600</span></div>
+          <div class="summary-row"><span>Cost of Goods Sold (COGS)</span><span>Rp. 0 (0.00%)</span></div>
+          <div class="summary-row bold"><span>Gross Profit</span><span>Rp. 182.056.600 (100.00%)</span></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- =================================================================== -->
+  <!-- 5. REPORTS > SALES > PAYMENT METHODS                                -->
+  <!-- =================================================================== -->
+  <main id="view-payment-methods" class="page-view">
+      <div class="top-header">
+        <h2 class="page-title">Sales</h2>
+        <button type="button" class="btn-export"><span>Export</span><span style="font-size:10px">&#9662;</span></button>
+      </div>
+      <div class="filter-bar">
+        <div class="outlet-box">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="#888"><path d="M4 7l1-3h14l1 3v2H4V7zm1 4h14v9h-4v-6H9v6H5v-9z"/></svg>
+          <span>demo acount</span>
+        </div>
+        <div class="date-group">
+          <button type="button" class="date-arrow left">&#10094;</button>
+          <button type="button" class="date-display"><span>1/10/2026 - 31/10/2026</span><span style="font-size:11px;color:#666">&#8964;</span></button>
+          <button type="button" class="date-arrow right">&#10095;</button>
+        </div>
+      </div>
+    <div class="report-body">
+        <nav class="report-subnav">
+          <a href="#view-sales-summary" class="subnav-pill">Sales Summary</a>
+          <a href="#view-gross-profit" class="subnav-pill">Gross Profit</a>
+          <a href="#view-payment-methods" class="subnav-pill active">Payment Methods</a>
+          <a href="#view-sales-type" class="subnav-pill">Sales Type</a>
+          <a href="#view-item-sales" class="subnav-pill">Item Sales</a>
+          <a href="#view-category-sales" class="subnav-pill">Category Sales</a>
+          <a href="#view-brand-sales" class="subnav-pill">Brand Sales</a>
+          <a href="#view-modifier-sales" class="subnav-pill">Modifier Sales</a>
+          <a href="#view-discounts-report" class="subnav-pill">Discounts</a>
+          <a href="#view-taxes-report" class="subnav-pill">Taxes</a>
+          <a href="#view-gratuity-report" class="subnav-pill">Gratuity</a>
+          <a href="#view-collected-by" class="subnav-pill">Collected By</a>
+          <a href="#view-served-by" class="subnav-pill">Served By</a>
+        </nav>
+
+      <section class="report-pane">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Payment Method</th><th class="r">Number of Transactions</th><th class="r">Total Collected</th></tr></thead>
+            <tbody>
+              <tr><td>Cash</td><td class="r">64</td><td class="r">Rp. 23.602.021</td></tr>
+              <tr class="tx-group-row"><td colspan="3">Online Delivery</td></tr>
+              <tr><td>GrabFood</td><td class="r">79</td><td class="r">Rp. 27.335.385</td></tr>
+              <tr class="tx-group-row"><td colspan="3">EDC</td></tr>
+              <tr><td>BNI</td><td class="r">349</td><td class="r">Rp. 159.337.967</td></tr>
+            </tbody>
+            <tfoot>
+              <tr><td>Total</td><td class="r">492</td><td class="r">Rp. 210.275.373</td></tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- =================================================================== -->
+  <!-- 6. REPORTS > SALES > SALES TYPE                                     -->
+  <!-- =================================================================== -->
+  <main id="view-sales-type" class="page-view">
+      <div class="top-header">
+        <h2 class="page-title">Sales</h2>
+        <button type="button" class="btn-export"><span>Export</span><span style="font-size:10px">&#9662;</span></button>
+      </div>
+      <div class="filter-bar">
+        <div class="outlet-box">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="#888"><path d="M4 7l1-3h14l1 3v2H4V7zm1 4h14v9h-4v-6H9v6H5v-9z"/></svg>
+          <span>demo acount</span>
+        </div>
+        <div class="date-group">
+          <button type="button" class="date-arrow left">&#10094;</button>
+          <button type="button" class="date-display"><span>1/10/2026 - 31/10/2026</span><span style="font-size:11px;color:#666">&#8964;</span></button>
+          <button type="button" class="date-arrow right">&#10095;</button>
+        </div>
+      </div>
+    <div class="report-body">
+        <nav class="report-subnav">
+          <a href="#view-sales-summary" class="subnav-pill">Sales Summary</a>
+          <a href="#view-gross-profit" class="subnav-pill">Gross Profit</a>
+          <a href="#view-payment-methods" class="subnav-pill">Payment Methods</a>
+          <a href="#view-sales-type" class="subnav-pill active">Sales Type</a>
+          <a href="#view-item-sales" class="subnav-pill">Item Sales</a>
+          <a href="#view-category-sales" class="subnav-pill">Category Sales</a>
+          <a href="#view-brand-sales" class="subnav-pill">Brand Sales</a>
+          <a href="#view-modifier-sales" class="subnav-pill">Modifier Sales</a>
+          <a href="#view-discounts-report" class="subnav-pill">Discounts</a>
+          <a href="#view-taxes-report" class="subnav-pill">Taxes</a>
+          <a href="#view-gratuity-report" class="subnav-pill">Gratuity</a>
+          <a href="#view-collected-by" class="subnav-pill">Collected By</a>
+          <a href="#view-served-by" class="subnav-pill">Served By</a>
+        </nav>
+
+      <section class="report-pane">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Sales Type</th><th class="r">Count</th><th class="r">Total Collected</th></tr></thead>
+            <tbody>
+              <tr><td>No Sales Type</td><td class="r">489</td><td class="r">Rp. 210.275.373</td></tr>
+            </tbody>
+            <tfoot>
+              <tr><td>Total</td><td class="r">489</td><td class="r">Rp. 210.275.373</td></tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- =================================================================== -->
+  <!-- 7. REPORTS > SALES > CATEGORY SALES                                 -->
+  <!-- =================================================================== -->
+  <main id="view-category-sales" class="page-view">
+      <div class="top-header">
+        <h2 class="page-title">Sales</h2>
+        <button type="button" class="btn-export"><span>Export</span><span style="font-size:10px">&#9662;</span></button>
+      </div>
+      <div class="filter-bar">
+        <div class="outlet-box">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="#888"><path d="M4 7l1-3h14l1 3v2H4V7zm1 4h14v9h-4v-6H9v6H5v-9z"/></svg>
+          <span>demo acount</span>
+        </div>
+        <div class="date-group">
+          <button type="button" class="date-arrow left">&#10094;</button>
+          <button type="button" class="date-display"><span>1/10/2026 - 31/10/2026</span><span style="font-size:11px;color:#666">&#8964;</span></button>
+          <button type="button" class="date-arrow right">&#10095;</button>
+        </div>
+      </div>
+    <div class="report-body">
+        <nav class="report-subnav">
+          <a href="#view-sales-summary" class="subnav-pill">Sales Summary</a>
+          <a href="#view-gross-profit" class="subnav-pill">Gross Profit</a>
+          <a href="#view-payment-methods" class="subnav-pill">Payment Methods</a>
+          <a href="#view-sales-type" class="subnav-pill">Sales Type</a>
+          <a href="#view-item-sales" class="subnav-pill">Item Sales</a>
+          <a href="#view-category-sales" class="subnav-pill active">Category Sales</a>
+          <a href="#view-brand-sales" class="subnav-pill">Brand Sales</a>
+          <a href="#view-modifier-sales" class="subnav-pill">Modifier Sales</a>
+          <a href="#view-discounts-report" class="subnav-pill">Discounts</a>
+          <a href="#view-taxes-report" class="subnav-pill">Taxes</a>
+          <a href="#view-gratuity-report" class="subnav-pill">Gratuity</a>
+          <a href="#view-collected-by" class="subnav-pill">Collected By</a>
+          <a href="#view-served-by" class="subnav-pill">Served By</a>
+        </nav>
+
+      <section class="report-pane">
+        <p class="report-desc">See how categories contribute to the profit and margin for your business.</p>
+        <div class="table-wrap">
+          <table class="wide-table">
+            <thead>
+              <tr>
+                <th class="sticky-col">Category</th>
+                <th class="r">Items Sold <i class="info-dot">i</i></th>
+                <th class="r">Items Refunded <i class="info-dot">i</i></th>
+                <th class="r">Gross Sales</th>
+                <th class="r">Discount</th>
+                <th class="r">Refund</th>
+                <th class="r">Net Sales</th>
+                <th class="r">COGS <i class="info-dot">i</i></th>
+                <th class="r">Gross Profit <i class="info-dot">i</i></th>
+                <th class="r">Gross Margin</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="sticky-col">Breakfast</td><td class="r">130</td><td class="r"></td><td class="r">Rp. 18.100.000</td><td class="r">(Rp. 154.000)</td><td class="r">Rp. 0</td><td class="r">Rp. 17.946.000</td><td class="r">Rp. 0</td><td class="r">Rp. 17.946.000</td><td class="r">100%</td></tr>
+              <tr><td class="sticky-col">Dessert</td><td class="r">40</td><td class="r"></td><td class="r">Rp. 4.134.000</td><td class="r">(Rp. 6.250)</td><td class="r">Rp. 0</td><td class="r">Rp. 4.127.750</td><td class="r">Rp. 0</td><td class="r">Rp. 4.127.750</td><td class="r">100%</td></tr>
+              <tr><td class="sticky-col">Drink</td><td class="r">695</td><td class="r">5</td><td class="r">Rp. 25.605.000</td><td class="r">(Rp. 198.000)</td><td class="r">(Rp. 190.000)</td><td class="r">Rp. 25.217.000</td><td class="r">Rp. 0</td><td class="r">Rp. 25.217.000</td><td class="r">100%</td></tr>
+              <tr><td class="sticky-col">Extra</td><td class="r">224</td><td class="r"></td><td class="r">Rp. 8.601.500</td><td class="r">(Rp. 160.900)</td><td class="r">Rp. 0</td><td class="r">Rp. 8.440.600</td><td class="r">Rp. 0</td><td class="r">Rp. 8.440.600</td><td class="r">100%</td></tr>
+              <tr><td class="sticky-col">Kebab</td><td class="r">491</td><td class="r">5</td><td class="r">Rp. 72.720.000</td><td class="r">(Rp. 1.022.500)</td><td class="r">(Rp. 665.000)</td><td class="r">Rp. 71.032.500</td><td class="r">Rp. 0</td><td class="r">Rp. 71.032.500</td><td class="r">100%</td></tr>
+              <tr><td class="sticky-col">Mezze</td><td class="r">175</td><td class="r"></td><td class="r">Rp. 12.360.000</td><td class="r">(Rp. 262.750)</td><td class="r">Rp. 0</td><td class="r">Rp. 12.097.250</td><td class="r">Rp. 0</td><td class="r">Rp. 12.097.250</td><td class="r">100%</td></tr>
+              <tr><td class="sticky-col">Pide &amp; Gozleme</td><td class="r">217</td><td class="r">2</td><td class="r">Rp. 27.390.000</td><td class="r">(Rp. 365.250)</td><td class="r">(Rp. 280.000)</td><td class="r">Rp. 26.744.750</td><td class="r">Rp. 0</td><td class="r">Rp. 26.744.750</td><td class="r">100%</td></tr>
+              <tr><td class="sticky-col">Salad</td><td class="r">60</td><td class="r"></td><td class="r">Rp. 4.220.000</td><td class="r">(Rp. 86.250)</td><td class="r">Rp. 0</td><td class="r">Rp. 4.133.750</td><td class="r">Rp. 0</td><td class="r">Rp. 4.133.750</td><td class="r">100%</td></tr>
+              <tr><td class="sticky-col">Smooties bowls</td><td class="r">3</td><td class="r"></td><td class="r">Rp. 240.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 240.000</td><td class="r">Rp. 0</td><td class="r">Rp. 240.000</td><td class="r">100%</td></tr>
+              <tr><td class="sticky-col">Soup</td><td class="r">89</td><td class="r">2</td><td class="r">Rp. 6.145.000</td><td class="r">(Rp. 6.500)</td><td class="r">(Rp. 130.000)</td><td class="r">Rp. 6.008.500</td><td class="r">Rp. 0</td><td class="r">Rp. 6.008.500</td><td class="r">100%</td></tr>
+              <tr><td class="sticky-col">Uncategorized</td><td class="r">13</td><td class="r"></td><td class="r">Rp. 700.000</td><td class="r">(Rp. 1.500)</td><td class="r">Rp. 0</td><td class="r">Rp. 698.500</td><td class="r">Rp. 0</td><td class="r">Rp. 698.500</td><td class="r">100%</td></tr>
+              <tr><td class="sticky-col">only sish</td><td class="r">46</td><td class="r"></td><td class="r">Rp. 5.370.000</td><td class="r">Rp. 0</td><td class="r">Rp. 0</td><td class="r">Rp. 5.370.000</td><td class="r">Rp. 0</td><td class="r">Rp. 5.370.000</td><td class="r">100%</td></tr>
+            </tbody>
+            <tfoot>
+              <tr><td class="sticky-col">Total</td><td class="r">2183</td><td class="r">14</td><td class="r">Rp. 185.585.500</td><td class="r">(Rp. 2.263.900)</td><td class="r">(Rp. 1.265.000)</td><td class="r">Rp. 182.056.600</td><td class="r">Rp. 0</td><td class="r">Rp. 182.056.600</td><td class="r">100%</td></tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- =================================================================== -->
+  <!-- 8. REPORTS > SALES > BRAND / MODIFIER / DISCOUNTS / TAXES / GRATUITY / STAFF / SERVER -->
+  <!-- =================================================================== -->
+  <main id="view-brand-sales" class="page-view">
+      <div class="top-header">
+        <h2 class="page-title">Sales</h2>
+        <button type="button" class="btn-export"><span>Export</span><span style="font-size:10px">&#9662;</span></button>
+      </div>
+      <div class="filter-bar">
+        <div class="outlet-box">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="#888"><path d="M4 7l1-3h14l1 3v2H4V7zm1 4h14v9h-4v-6H9v6H5v-9z"/></svg>
+          <span>demo acount</span>
+        </div>
+        <div class="date-group">
+          <button type="button" class="date-arrow left">&#10094;</button>
+          <button type="button" class="date-display"><span>1/10/2026 - 31/10/2026</span><span style="font-size:11px;color:#666">&#8964;</span></button>
+          <button type="button" class="date-arrow right">&#10095;</button>
+        </div>
+      </div>
+    <div class="report-body">
+        <nav class="report-subnav">
+          <a href="#view-sales-summary" class="subnav-pill">Sales Summary</a>
+          <a href="#view-gross-profit" class="subnav-pill">Gross Profit</a>
+          <a href="#view-payment-methods" class="subnav-pill">Payment Methods</a>
+          <a href="#view-sales-type" class="subnav-pill">Sales Type</a>
+          <a href="#view-item-sales" class="subnav-pill">Item Sales</a>
+          <a href="#view-category-sales" class="subnav-pill">Category Sales</a>
+          <a href="#view-brand-sales" class="subnav-pill active">Brand Sales</a>
+          <a href="#view-modifier-sales" class="subnav-pill">Modifier Sales</a>
+          <a href="#view-discounts-report" class="subnav-pill">Discounts</a>
+          <a href="#view-taxes-report" class="subnav-pill">Taxes</a>
+          <a href="#view-gratuity-report" class="subnav-pill">Gratuity</a>
+          <a href="#view-collected-by" class="subnav-pill">Collected By</a>
+          <a href="#view-served-by" class="subnav-pill">Served By</a>
+        </nav>
+
+      <section class="report-pane"><div class="empty-state"><h3>No Data To Display</h3><p>No brand sales recorded in this period.</p></div></section>
+    </div>
+  </main>
+
+  <main id="view-modifier-sales" class="page-view">
+      <div class="top-header">
+        <h2 class="page-title">Sales</h2>
+        <button type="button" class="btn-export"><span>Export</span><span style="font-size:10px">&#9662;</span></button>
+      </div>
+      <div class="filter-bar">
+        <div class="outlet-box">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="#888"><path d="M4 7l1-3h14l1 3v2H4V7zm1 4h14v9h-4v-6H9v6H5v-9z"/></svg>
+          <span>demo acount</span>
+        </div>
+        <div class="date-group">
+          <button type="button" class="date-arrow left">&#10094;</button>
+          <button type="button" class="date-display"><span>1/10/2026 - 31/10/2026</span><span style="font-size:11px;color:#666">&#8964;</span></button>
+          <button type="button" class="date-arrow right">&#10095;</button>
+        </div>
+      </div>
+    <div class="report-body">
+        <nav class="report-subnav">
+          <a href="#view-sales-summary" class="subnav-pill">Sales Summary</a>
+          <a href="#view-gross-profit" class="subnav-pill">Gross Profit</a>
+          <a href="#view-payment-methods" class="subnav-pill">Payment Methods</a>
+          <a href="#view-sales-type" class="subnav-pill">Sales Type</a>
+          <a href="#view-item-sales" class="subnav-pill">Item Sales</a>
+          <a href="#view-category-sales" class="subnav-pill">Category Sales</a>
+          <a href="#view-brand-sales" class="subnav-pill">Brand Sales</a>
+          <a href="#view-modifier-sales" class="subnav-pill active">Modifier Sales</a>
+          <a href="#view-discounts-report" class="subnav-pill">Discounts</a>
+          <a href="#view-taxes-report" class="subnav-pill">Taxes</a>
+          <a href="#view-gratuity-report" class="subnav-pill">Gratuity</a>
+          <a href="#view-collected-by" class="subnav-pill">Collected By</a>
+          <a href="#view-served-by" class="subnav-pill">Served By</a>
+        </nav>
+
+      <section class="report-pane"><div class="empty-state"><h3>No Data To Display</h3><p>No modifier sales recorded in this period.</p></div></section>
+    </div>
+  </main>
+
+  <main id="view-discounts-report" class="page-view">
+      <div class="top-header">
+        <h2 class="page-title">Sales</h2>
+        <button type="button" class="btn-export"><span>Export</span><span style="font-size:10px">&#9662;</span></button>
+      </div>
+      <div class="filter-bar">
+        <div class="outlet-box">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="#888"><path d="M4 7l1-3h14l1 3v2H4V7zm1 4h14v9h-4v-6H9v6H5v-9z"/></svg>
+          <span>demo acount</span>
+        </div>
+        <div class="date-group">
+          <button type="button" class="date-arrow left">&#10094;</button>
+          <button type="button" class="date-display"><span>1/10/2026 - 31/10/2026</span><span style="font-size:11px;color:#666">&#8964;</span></button>
+          <button type="button" class="date-arrow right">&#10095;</button>
+        </div>
+      </div>
+    <div class="report-body">
+        <nav class="report-subnav">
+          <a href="#view-sales-summary" class="subnav-pill">Sales Summary</a>
+          <a href="#view-gross-profit" class="subnav-pill">Gross Profit</a>
+          <a href="#view-payment-methods" class="subnav-pill">Payment Methods</a>
+          <a href="#view-sales-type" class="subnav-pill">Sales Type</a>
+          <a href="#view-item-sales" class="subnav-pill">Item Sales</a>
+          <a href="#view-category-sales" class="subnav-pill">Category Sales</a>
+          <a href="#view-brand-sales" class="subnav-pill">Brand Sales</a>
+          <a href="#view-modifier-sales" class="subnav-pill">Modifier Sales</a>
+          <a href="#view-discounts-report" class="subnav-pill active">Discounts</a>
+          <a href="#view-taxes-report" class="subnav-pill">Taxes</a>
+          <a href="#view-gratuity-report" class="subnav-pill">Gratuity</a>
+          <a href="#view-collected-by" class="subnav-pill">Collected By</a>
+          <a href="#view-served-by" class="subnav-pill">Served By</a>
+        </nav>
+
+      <section class="report-pane">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Name</th><th class="r">Discount Amount</th><th class="r">Count</th><th class="r">Gross Discount</th><th class="r">Discount Refunded</th><th class="r">Net Discount</th></tr></thead>
+            <tbody>
+              <tr class="tx-group-row"><td>Disc. Own</td><td class="r">%</td><td class="r">94</td><td class="r">(Rp. 2.263.900)</td><td class="r">Rp. 0</td><td class="r">(Rp. 2.263.900)</td></tr>
+              <tr><td style="padding-left:28px">Disc. Own (10%)</td><td class="r">10%</td><td class="r">30</td><td class="r">(Rp. 336.500)</td><td class="r">Rp. 0</td><td class="r">(Rp. 336.500)</td></tr>
+              <tr><td style="padding-left:28px">Disc. Own (5%)</td><td class="r">5%</td><td class="r">36</td><td class="r">(Rp. 217.900)</td><td class="r">Rp. 0</td><td class="r">(Rp. 217.900)</td></tr>
+              <tr><td style="padding-left:28px">Disc. Own (2%)</td><td class="r">2%</td><td class="r">1</td><td class="r">(Rp. 7.500)</td><td class="r">Rp. 0</td><td class="r">(Rp. 7.500)</td></tr>
+              <tr><td style="padding-left:28px">Disc. Own (20%)</td><td class="r">20%</td><td class="r">27</td><td class="r">(Rp. 1.702.000)</td><td class="r">Rp. 0</td><td class="r">(Rp. 1.702.000)</td></tr>
+            </tbody>
+            <tfoot>
+              <tr><td>Total</td><td class="r"></td><td class="r">94</td><td class="r">(Rp. 2.263.900)</td><td class="r">Rp. 0</td><td class="r">(Rp. 2.263.900)</td></tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <main id="view-taxes-report" class="page-view">
+      <div class="top-header">
+        <h2 class="page-title">Sales</h2>
+        <button type="button" class="btn-export"><span>Export</span><span style="font-size:10px">&#9662;</span></button>
+      </div>
+      <div class="filter-bar">
+        <div class="outlet-box">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="#888"><path d="M4 7l1-3h14l1 3v2H4V7zm1 4h14v9h-4v-6H9v6H5v-9z"/></svg>
+          <span>demo acount</span>
+        </div>
+        <div class="date-group">
+          <button type="button" class="date-arrow left">&#10094;</button>
+          <button type="button" class="date-display"><span>1/10/2026 - 31/10/2026</span><span style="font-size:11px;color:#666">&#8964;</span></button>
+          <button type="button" class="date-arrow right">&#10095;</button>
+        </div>
+      </div>
+    <div class="report-body">
+        <nav class="report-subnav">
+          <a href="#view-sales-summary" class="subnav-pill">Sales Summary</a>
+          <a href="#view-gross-profit" class="subnav-pill">Gross Profit</a>
+          <a href="#view-payment-methods" class="subnav-pill">Payment Methods</a>
+          <a href="#view-sales-type" class="subnav-pill">Sales Type</a>
+          <a href="#view-item-sales" class="subnav-pill">Item Sales</a>
+          <a href="#view-category-sales" class="subnav-pill">Category Sales</a>
+          <a href="#view-brand-sales" class="subnav-pill">Brand Sales</a>
+          <a href="#view-modifier-sales" class="subnav-pill">Modifier Sales</a>
+          <a href="#view-discounts-report" class="subnav-pill">Discounts</a>
+          <a href="#view-taxes-report" class="subnav-pill active">Taxes</a>
+          <a href="#view-gratuity-report" class="subnav-pill">Gratuity</a>
+          <a href="#view-collected-by" class="subnav-pill">Collected By</a>
+          <a href="#view-served-by" class="subnav-pill">Served By</a>
+        </nav>
+
+      <section class="report-pane">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Name</th><th class="r">Tax Rate</th><th class="r">Taxable Amount</th><th class="r">Tax Collected</th></tr></thead>
+            <tbody>
+              <tr><td>Tax</td><td class="r">10%</td><td class="r">Rp. 191.159.430</td><td class="r">Rp. 19.115.943</td></tr>
+            </tbody>
+            <tfoot>
+              <tr><td>Total</td><td class="r"></td><td class="r">Rp. 191.159.430</td><td class="r">Rp. 19.115.943</td></tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <main id="view-gratuity-report" class="page-view">
+      <div class="top-header">
+        <h2 class="page-title">Sales</h2>
+        <button type="button" class="btn-export"><span>Export</span><span style="font-size:10px">&#9662;</span></button>
+      </div>
+      <div class="filter-bar">
+        <div class="outlet-box">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="#888"><path d="M4 7l1-3h14l1 3v2H4V7zm1 4h14v9h-4v-6H9v6H5v-9z"/></svg>
+          <span>demo acount</span>
+        </div>
+        <div class="date-group">
+          <button type="button" class="date-arrow left">&#10094;</button>
+          <button type="button" class="date-display"><span>1/10/2026 - 31/10/2026</span><span style="font-size:11px;color:#666">&#8964;</span></button>
+          <button type="button" class="date-arrow right">&#10095;</button>
+        </div>
+      </div>
+    <div class="report-body">
+        <nav class="report-subnav">
+          <a href="#view-sales-summary" class="subnav-pill">Sales Summary</a>
+          <a href="#view-gross-profit" class="subnav-pill">Gross Profit</a>
+          <a href="#view-payment-methods" class="subnav-pill">Payment Methods</a>
+          <a href="#view-sales-type" class="subnav-pill">Sales Type</a>
+          <a href="#view-item-sales" class="subnav-pill">Item Sales</a>
+          <a href="#view-category-sales" class="subnav-pill">Category Sales</a>
+          <a href="#view-brand-sales" class="subnav-pill">Brand Sales</a>
+          <a href="#view-modifier-sales" class="subnav-pill">Modifier Sales</a>
+          <a href="#view-discounts-report" class="subnav-pill">Discounts</a>
+          <a href="#view-taxes-report" class="subnav-pill">Taxes</a>
+          <a href="#view-gratuity-report" class="subnav-pill active">Gratuity</a>
+          <a href="#view-collected-by" class="subnav-pill">Collected By</a>
+          <a href="#view-served-by" class="subnav-pill">Served By</a>
+        </nav>
+
+      <section class="report-pane">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Name</th><th class="r">Rate</th><th class="r">Gratuity Collected</th></tr></thead>
+            <tbody>
+              <tr><td>Service</td><td class="r">5%</td><td class="r">Rp. 9.102.830</td></tr>
+            </tbody>
+            <tfoot>
+              <tr><td>Total</td><td class="r"></td><td class="r">Rp. 9.102.830</td></tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <main id="view-collected-by" class="page-view">
+      <div class="top-header">
+        <h2 class="page-title">Sales</h2>
+        <button type="button" class="btn-export"><span>Export</span><span style="font-size:10px">&#9662;</span></button>
+      </div>
+      <div class="filter-bar">
+        <div class="outlet-box">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="#888"><path d="M4 7l1-3h14l1 3v2H4V7zm1 4h14v9h-4v-6H9v6H5v-9z"/></svg>
+          <span>demo acount</span>
+        </div>
+        <div class="date-group">
+          <button type="button" class="date-arrow left">&#10094;</button>
+          <button type="button" class="date-display"><span>1/10/2026 - 31/10/2026</span><span style="font-size:11px;color:#666">&#8964;</span></button>
+          <button type="button" class="date-arrow right">&#10095;</button>
+        </div>
+      </div>
+    <div class="report-body">
+        <nav class="report-subnav">
+          <a href="#view-sales-summary" class="subnav-pill">Sales Summary</a>
+          <a href="#view-gross-profit" class="subnav-pill">Gross Profit</a>
+          <a href="#view-payment-methods" class="subnav-pill">Payment Methods</a>
+          <a href="#view-sales-type" class="subnav-pill">Sales Type</a>
+          <a href="#view-item-sales" class="subnav-pill">Item Sales</a>
+          <a href="#view-category-sales" class="subnav-pill">Category Sales</a>
+          <a href="#view-brand-sales" class="subnav-pill">Brand Sales</a>
+          <a href="#view-modifier-sales" class="subnav-pill">Modifier Sales</a>
+          <a href="#view-discounts-report" class="subnav-pill">Discounts</a>
+          <a href="#view-taxes-report" class="subnav-pill">Taxes</a>
+          <a href="#view-gratuity-report" class="subnav-pill">Gratuity</a>
+          <a href="#view-collected-by" class="subnav-pill active">Collected By</a>
+          <a href="#view-served-by" class="subnav-pill">Served By</a>
+        </nav>
+
+      <section class="report-pane">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Name</th><th>Title</th><th class="r">Number of Transactions</th><th class="r">Total Collected</th></tr></thead>
+            <tbody>
+              <tr><td>Andi Pratama</td><td>Owner</td><td class="r">489</td><td class="r">Rp. 210.275.373</td></tr>
+            </tbody>
+            <tfoot>
+              <tr><td>Total</td><td></td><td class="r">489</td><td class="r">Rp. 210.275.373</td></tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <main id="view-served-by" class="page-view">
+      <div class="top-header">
+        <h2 class="page-title">Sales</h2>
+        <button type="button" class="btn-export"><span>Export</span><span style="font-size:10px">&#9662;</span></button>
+      </div>
+      <div class="filter-bar">
+        <div class="outlet-box">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="#888"><path d="M4 7l1-3h14l1 3v2H4V7zm1 4h14v9h-4v-6H9v6H5v-9z"/></svg>
+          <span>demo acount</span>
+        </div>
+        <div class="date-group">
+          <button type="button" class="date-arrow left">&#10094;</button>
+          <button type="button" class="date-display"><span>1/10/2026 - 31/10/2026</span><span style="font-size:11px;color:#666">&#8964;</span></button>
+          <button type="button" class="date-arrow right">&#10095;</button>
+        </div>
+      </div>
+    <div class="report-body">
+        <nav class="report-subnav">
+          <a href="#view-sales-summary" class="subnav-pill">Sales Summary</a>
+          <a href="#view-gross-profit" class="subnav-pill">Gross Profit</a>
+          <a href="#view-payment-methods" class="subnav-pill">Payment Methods</a>
+          <a href="#view-sales-type" class="subnav-pill">Sales Type</a>
+          <a href="#view-item-sales" class="subnav-pill">Item Sales</a>
+          <a href="#view-category-sales" class="subnav-pill">Category Sales</a>
+          <a href="#view-brand-sales" class="subnav-pill">Brand Sales</a>
+          <a href="#view-modifier-sales" class="subnav-pill">Modifier Sales</a>
+          <a href="#view-discounts-report" class="subnav-pill">Discounts</a>
+          <a href="#view-taxes-report" class="subnav-pill">Taxes</a>
+          <a href="#view-gratuity-report" class="subnav-pill">Gratuity</a>
+          <a href="#view-collected-by" class="subnav-pill">Collected By</a>
+          <a href="#view-served-by" class="subnav-pill active">Served By</a>
+        </nav>
+
+      <section class="report-pane"><div class="empty-state"><h3>No Data To Display</h3><p>Track Server is currently turned off in Checkout Settings.</p></div></section>
+    </div>
+  </main>
+
+  <!-- =================================================================== -->
+  <!-- 9. REPORTS > TRANSACTIONS                                           -->
+  <!-- =================================================================== -->
+  <main id="view-transactions" class="page-view">
+    <div class="top-header">
+      <h2 class="page-title">Transactions</h2>
+    </div>
+    <div class="mode-tabs" style="margin-bottom:18px">
+      <div class="mode-tab active">Success Orders</div>
+      <div class="mode-tab">Cancelled Orders</div>
+      <div class="mode-tab">Void Items</div>
+    </div>
+    <div class="filter-bar" style="justify-content:space-between">
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <div class="outlet-box" style="justify-content:space-between"><span>demo acount</span><span>&#8964;</span></div>
+        <div class="date-group">
+          <button type="button" class="date-arrow left" style="border-color:#2574a9;color:#2574a9">&#10094;</button>
+          <button type="button" class="date-display" style="border-color:#2574a9;color:#2574a9"><span>1/11/2026</span><span>&#128197;</span></button>
+          <button type="button" class="date-arrow right" style="border-color:#2574a9;color:#2574a9">&#10095;</button>
+        </div>
+        <div class="search-pill" style="border-radius:4px;width:240px"><span>Receipt Number</span><span>&#128269;</span></div>
+      </div>
+      <button type="button" class="btn-export"><span>Export</span><span>&#8964;</span></button>
+    </div>
+
+    <div class="tx-kpi-banner">
+      <div><strong>11</strong><span>TRANSACTIONS</span></div>
+      <div><strong>Rp. 4.431.735</strong><span>TOTAL COLLECTED</span></div>
+      <div><strong>Rp. 3.837.000</strong><span>NET SALES</span></div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Outlet</th><th>Time</th><th>Collected By</th><th>Items</th><th class="r">Total Price</th></tr>
+        </thead>
+        <tbody>
+          <tr class="tx-group-row"><td colspan="4">Sunday, November 1st, 2026</td><td class="r">Rp. 4.431.735</td></tr>
+          <tr><td>demo acount</td><td>21:02</td><td>Andi Pratama</td><td>Adana kebab lamb x 2, Tabbouleh salad, Ayran, picles chili, sigara borek, Babbaganous</td><td class="r">Rp. 646.800</td></tr>
+          <tr><td>demo acount</td><td>20:41</td><td>Andi Pratama</td><td>Chesee gozleme, Babbaganous, chicken thigh</td><td class="r">Rp. 346.500</td></tr>
+          <tr><td>demo acount</td><td>18:43</td><td>Andi Pratama</td><td>Adana kebab beff, Ice lemon tea</td><td class="r">Rp. 190.575</td></tr>
+          <tr><td>demo acount</td><td>18:28</td><td>Andi Pratama</td><td>terbiyeli corba, Bread</td><td class="r">Rp. 140.910</td></tr>
+          <tr><td>demo acount</td><td>18:28</td><td>Andi Pratama</td><td>chikofte x 2, Falafel roll, Yogurt, Lentil soup x 2, Manti, Coban salad, Ayran, lamb sish</td><td class="r">Rp. 1.027.950</td></tr>
+          <tr><td>demo acount</td><td>16:56</td><td>Andi Pratama</td><td>Pilav us kavurma, Ayran</td><td class="r">Rp. 225.225</td></tr>
+          <tr><td>demo acount</td><td>15:30</td><td>Andi Pratama</td><td>Chesee gozleme, potato gozleme, Still water, Set breakfast menu, Juice</td><td class="r">Rp. 612.150</td></tr>
+          <tr><td>demo acount</td><td>13:10</td><td>Andi Pratama</td><td>Lemonade, soda water x 2</td><td class="r">Rp. 132.825</td></tr>
+          <tr><td>demo acount</td><td>12:12</td><td>Andi Pratama</td><td>Kavurmali Yumurta, Peynerli pide, sucuk, Ayran</td><td class="r">Rp. 386.925</td></tr>
+          <tr><td>demo acount</td><td>11:52</td><td>Andi Pratama</td><td>Lentil soup, potato gozleme</td><td class="r">Rp. 202.125</td></tr>
+          <tr><td>demo acount</td><td>11:16</td><td>Andi Pratama</td><td>Peynerli pide, Yaprak Sarma, Set breakfast menu</td><td class="r">Rp. 519.750</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- =================================================================== -->
+  <!-- 10. REPORTS > INVOICES                                              -->
+  <!-- =================================================================== -->
+  <main id="view-invoices" class="page-view">
+    <div class="top-header">
+      <h2 class="page-title">Invoice</h2>
+      <button type="button" class="btn-export"><span>Export</span><span style="font-size:10px">&#9662;</span></button>
+    </div>
+    <div class="filter-bar">
+      <div class="outlet-box"><span>demo acount</span></div>
+      <div class="date-group">
+        <button type="button" class="date-arrow left">&#10094;</button>
+        <button type="button" class="date-display"><span>1/10/2026 - 31/10/2026</span><span>&#8964;</span></button>
+        <button type="button" class="date-arrow right">&#10095;</button>
+      </div>
+      <div class="pill-select"><span>Select Status</span><span>&#8964;</span></div>
+    </div>
+    <div class="empty-state">
+      <h3>No Data To Display</h3>
+      <p>You can make invoice through your device, or select different time frame.</p>
+    </div>
+  </main>
+
+  <!-- =================================================================== -->
+  <!-- 11. REPORTS > SHIFT                                                 -->
+  <!-- =================================================================== -->
+  <main id="view-shift" class="page-view">
+    <div class="top-header">
+      <h2 class="page-title">Shift</h2>
+      <button type="button" class="btn-export"><span>Export</span><span style="font-size:10px">&#9662;</span></button>
+    </div>
+    <div class="filter-bar">
+      <div class="outlet-box"><span>demo acount</span></div>
+      <div class="date-group">
+        <button type="button" class="date-arrow left">&#10094;</button>
+        <button type="button" class="date-display"><span>1/10/2026 - 31/10/2026</span><span>&#8964;</span></button>
+        <button type="button" class="date-arrow right">&#10095;</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Name</th><th>Start Time</th><th>End Time</th><th class="r">Total Expected</th><th class="r">Total Actual</th><th class="r">Difference</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Andi Pratama</td><td>31/10/2026 10:47</td><td>31/10/2026 21:15</td><td class="r">Rp. 5.501.266</td><td class="r">Rp. 5.501.266</td><td class="r">Rp. 0</td></tr>
+          <tr><td>Andi Pratama</td><td>30/10/2026 12:37</td><td>30/10/2026 21:06</td><td class="r">Rp. 2.058.210</td><td class="r">Rp. 2.058.210</td><td class="r">Rp. 0</td></tr>
+          <tr><td>Andi Pratama</td><td>29/10/2026 12:15</td><td>29/10/2026 21:00</td><td class="r">Rp. 3.706.395</td><td class="r">Rp. 3.706.395</td><td class="r">Rp. 0</td></tr>
+          <tr><td>Andi Pratama</td><td>28/10/2026 08:27</td><td>28/10/2026 22:08</td><td class="r">Rp. 16.260.322</td><td class="r">Rp. 16.260.322</td><td class="r">Rp. 0</td></tr>
+          <tr><td>Andi Pratama</td><td>27/10/2026 12:22</td><td>27/10/2026 21:08</td><td class="r">Rp. 8.989.943</td><td class="r">Rp. 8.989.943</td><td class="r">Rp. 0</td></tr>
+          <tr><td>Andi Pratama</td><td>26/10/2026 10:38</td><td>26/10/2026 20:59</td><td class="r">Rp. 6.623.348</td><td class="r">Rp. 6.623.348</td><td class="r">Rp. 0</td></tr>
+          <tr><td>Andi Pratama</td><td>25/10/2026 13:31</td><td>25/10/2026 21:01</td><td class="r">Rp. 7.232.899</td><td class="r">Rp. 7.232.899</td><td class="r">Rp. 0</td></tr>
+          <tr><td>Andi Pratama</td><td>24/10/2026 09:52</td><td>24/10/2026 21:00</td><td class="r">Rp. 4.735.500</td><td class="r">Rp. 4.735.500</td><td class="r">Rp. 0</td></tr>
+          <tr><td>Andi Pratama</td><td>23/10/2026 09:49</td><td>23/10/2026 21:03</td><td class="r">Rp. 6.726.720</td><td class="r">Rp. 6.726.720</td><td class="r">Rp. 0</td></tr>
+          <tr><td>Andi Pratama</td><td>22/10/2026 09:43</td><td>22/10/2026 21:00</td><td class="r">Rp. 8.841.525</td><td class="r">Rp. 8.841.525</td><td class="r">Rp. 0</td></tr>
+          <tr><td>Andi Pratama</td><td>21/10/2026 09:13</td><td>21/10/2026 20:59</td><td class="r">Rp. 2.275.928</td><td class="r">Rp. 2.275.928</td><td class="r">Rp. 0</td></tr>
+          <tr><td>Andi Pratama</td><td>20/10/2026 11:49</td><td>20/10/2026 21:08</td><td class="r">Rp. 9.424.223</td><td class="r">Rp. 9.424.223</td><td class="r">Rp. 0</td></tr>
+          <tr><td>Andi Pratama</td><td>19/10/2026 12:07</td><td>19/10/2026 20:56</td><td class="r">Rp. 7.126.350</td><td class="r">Rp. 6.618.155</td><td class="r" style="color:#d9534f">(Rp. 508.195)</td></tr>
+          <tr><td>Andi Pratama</td><td>18/10/2026 09:18</td><td>18/10/2026 21:00</td><td class="r">Rp. 10.254.090</td><td class="r">Rp. 10.254.090</td><td class="r">Rp. 0</td></tr>
+          <tr><td>Andi Pratama</td><td>17/10/2026 09:37</td><td>17/10/2026 20:59</td><td class="r">Rp. 7.525.865</td><td class="r">Rp. 7.525.865</td><td class="r">Rp. 0</td></tr>
+          <tr><td>Andi Pratama</td><td>16/10/2026 10:14</td><td>16/10/2026 20:59</td><td class="r">Rp. 6.373.290</td><td class="r">Rp. 6.373.290</td><td class="r">Rp. 0</td></tr>
+          <tr><td>Andi Pratama</td><td>15/10/2026 10:23</td><td>15/10/2026 21:11</td><td class="r">Rp. 7.439.933</td><td class="r">Rp. 7.439.933</td><td class="r">Rp. 0</td></tr>
+          <tr><td>Andi Pratama</td><td>14/10/2026 10:57</td><td>14/10/2026 21:03</td><td class="r">Rp. 4.212.285</td><td class="r">Rp. 4.212.285</td><td class="r">Rp. 0</td></tr>
+          <tr><td>Andi Pratama</td><td>13/10/2026 10:11</td><td>13/10/2026 20:55</td><td class="r">Rp. 5.538.803</td><td class="r">Rp. 5.538.803</td><td class="r">Rp. 0</td></tr>
+          <tr><td>Andi Pratama</td><td>12/10/2026 09:58</td><td>12/10/2026 21:01</td><td class="r">Rp. 4.330.384</td><td class="r">Rp. 4.330.384</td><td class="r">Rp. 0</td></tr>
+          <tr><td>Andi Pratama</td><td>11/10/2026 10:16</td><td>11/10/2026 21:01</td><td class="r">Rp. 6.775.230</td><td class="r">Rp. 6.775.230</td><td class="r">Rp. 0</td></tr>
+          <tr><td>Andi Pratama</td><td>10/10/2026 10:01</td><td>10/10/2026 21:06</td><td class="r">Rp. 10.245.429</td><td class="r">Rp. 9.050.015</td><td class="r" style="color:#d9534f">(Rp. 1.195.414)</td></tr>
+          <tr><td>Andi Pratama</td><td>9/10/2026 09:39</td><td>9/10/2026 21:27</td><td class="r">Rp. 9.834.825</td><td class="r">Rp. 9.834.825</td><td class="r">Rp. 0</td></tr>
+          <tr><td>Andi Pratama</td><td>8/10/2026 09:11</td><td>8/10/2026 20:56</td><td class="r">Rp. 5.116.650</td><td class="r">Rp. 5.116.650</td><td class="r">Rp. 0</td></tr>
+          <tr><td>Andi Pratama</td><td>7/10/2026 11:06</td><td>7/10/2026 21:00</td><td class="r">Rp. 4.878.721</td><td class="r">Rp. 4.878.721</td><td class="r">Rp. 0</td></tr>
+          <tr><td>Andi Pratama</td><td>6/10/2026 09:56</td><td>6/10/2026 21:12</td><td class="r">Rp. 4.377.450</td><td class="r">Rp. 4.377.450</td><td class="r">Rp. 0</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- =================================================================== -->
+  <!-- 12. LIBRARY > ITEM LIBRARY                                          -->
+  <!-- =================================================================== -->
+  <main id="view-library-items" class="page-view">
+    <div class="top-header">
+      <h2 class="page-title">Item Library</h2>
+      <div class="header-actions">
+        <span class="btn-outline">Total : 152</span>
+        <button type="button" class="btn-primary">Import / Export &#9662;</button>
+        <button type="button" class="btn-primary">Create Item</button>
+      </div>
+    </div>
+    <div class="filter-bar">
+      <div class="outlet-box">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="#888"><path d="M4 7l1-3h14l1 3v2H4V7zm1 4h14v9h-4v-6H9v6H5v-9z"/></svg>
+        <span>demo acount</span>
+      </div>
+      <div class="pill-select"><span>All Categories</span><span>&#11021;</span></div>
+      <div class="pill-select"><span>All Inventory</span><span>&#11021;</span></div>
+      <div class="search-pill"><span>Search</span><span>&#128269;</span></div>
+    </div>
+    <div class="table-wrap" style="max-height:calc(100vh - 245px)">
+      <table>
+        <thead>
+          <tr><th>Name</th><th>Category</th><th>Pricing</th><th>In Stock</th><th>Stock Alert</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>100+</td><td>Drink</td><td>Rp. 35.000</td><td></td><td></td></tr>
+          <tr><td>1/2chiken</td><td>Extra</td><td>Rp. 40.000</td><td></td><td></td></tr>
+          <tr><td>1/2chiken tight only</td><td>Extra</td><td>Rp. 57.500</td><td></td><td></td></tr>
+          <tr><td>1/2 chiken wings only</td><td>Extra</td><td>Rp. 52.500</td><td></td><td></td></tr>
+          <tr><td>1/2 lentil soup</td><td>Extra</td><td>Rp. 32.500</td><td></td><td></td></tr>
+          <tr><td>1/5 manti</td><td>Kebab</td><td>Rp. 68.000</td><td></td><td></td></tr>
+          <tr><td>acili ezme</td><td>Mezze</td><td>Rp. 45.000</td><td></td><td></td></tr>
+          <tr><td>adana beff</td><td>only sish</td><td>Rp. 115.000</td><td></td><td></td></tr>
+          <tr><td>adana beff skewer</td><td>Uncategorized</td><td>Rp. 115.000</td><td></td><td></td></tr>
+          <tr><td>adana chicken</td><td>only sish</td><td>Rp. 95.000</td><td></td><td></td></tr>
+          <tr><td>adana chiken sish</td><td>Kebab</td><td>Rp. 95.000</td><td></td><td></td></tr>
+          <tr><td>Adana kebab beff</td><td>Kebab</td><td>Rp. 135.000</td><td></td><td></td></tr>
+          <tr><td>Adana kebab chiken</td><td>Kebab</td><td>Rp. 125.000</td><td></td><td></td></tr>
+          <tr><td>Adana kebab lamb</td><td>Kebab</td><td>Rp. 145.000</td><td></td><td></td></tr>
+          <tr><td>adana lamb</td><td>only sish</td><td>Rp. 135.000</td><td></td><td></td></tr>
+          <tr><td>adana mix</td><td>only sish</td><td>Rp. 115.000</td><td></td><td></td></tr>
+          <tr><td>Americano</td><td>Coffe</td><td>Rp. 40.000</td><td></td><td></td></tr>
+          <tr><td>Artichoke</td><td>Extra</td><td>Rp. 50.000</td><td></td><td></td></tr>
+          <tr><td>Ayran</td><td>Drink</td><td>Rp. 45.000</td><td></td><td></td></tr>
+          <tr><td>Babbaganous</td><td>Mezze</td><td>Rp. 60.000</td><td></td><td></td></tr>
+          <tr><td>Bagel with sesame</td><td>Dessert</td><td>Rp. 24.000</td><td></td><td></td></tr>
+          <tr><td>Baklava</td><td>Dessert</td><td>Rp. 125.000</td><td></td><td></td></tr>
+          <tr><td>Basmati rice</td><td>Extra</td><td>Rp. 50.000</td><td></td><td></td></tr>
+          <tr><td>beef sish</td><td>only sish</td><td>Rp. 125.000</td><td></td><td></td></tr>
+          <tr><td>berry nice</td><td>Smooties bowls</td><td>Rp. 80.000</td><td></td><td></td></tr>
+          <tr><td>Bread</td><td>Extra</td><td>Rp. 17.000</td><td></td><td></td></tr>
+          <tr><td>Bulgur rice</td><td>Extra</td><td>Rp. 55.000</td><td></td><td></td></tr>
+          <tr><td>Butter croisant</td><td>Dessert</td><td>Rp. 45.000</td><td></td><td></td></tr>
+          <tr><td>Butter croissant</td><td>Dessert</td><td>Rp. 45.000</td><td></td><td></td></tr>
+          <tr><td>Cacik</td><td>Mezze</td><td>Rp. 55.000</td><td></td><td></td></tr>
+          <tr><td>Cappuccino</td><td>Coffe</td><td>Rp. 45.000</td><td></td><td></td></tr>
+          <tr><td>Caramel latte</td><td>Coffe</td><td>Rp. 50.000</td><td></td><td></td></tr>
+          <tr><td>Cay pot</td><td>Drink</td><td>Rp. 35.000</td><td></td><td></td></tr>
+          <tr><td>Chesee gozleme</td><td>Pide &amp; Gozleme</td><td>Rp. 125.000</td><td></td><td></td></tr>
+          <tr><td>Chicken sharma</td><td>Kebab</td><td>Rp. 95.000</td><td></td><td></td></tr>
+          <tr><td>chicken thigh</td><td>only sish</td><td>Rp. 115.000</td><td></td><td></td></tr>
+          <tr><td>Chicken Thing</td><td>Kebab</td><td>Rp. 155.000</td><td></td><td></td></tr>
+          <tr><td>chicken wings</td><td>only sish</td><td>Rp. 105.000</td><td></td><td></td></tr>
+          <tr><td>Chicken Wings</td><td>Kebab</td><td>Rp. 135.000</td><td></td><td></td></tr>
+          <tr><td>chiken breast grill</td><td>Kebab</td><td>Rp. 150.000</td><td></td><td></td></tr>
+          <tr><td>Chiken shawarma</td><td>Kebab</td><td>Rp. 95.000</td><td></td><td></td></tr>
+          <tr><td>chiken sish</td><td>only sish</td><td>Rp. 105.000</td><td></td><td></td></tr>
+          <tr><td>chikofte</td><td>Kebab</td><td>Rp. 125.000</td><td></td><td></td></tr>
+          <tr><td>chiligril</td><td>Extra</td><td>Rp. 5.000</td><td></td><td></td></tr>
+          <tr><td>choco croisant</td><td>Dessert</td><td>Rp. 30.000</td><td></td><td></td></tr>
+          <tr><td>Coban salad</td><td>Salad</td><td>Rp. 65.000</td><td></td><td></td></tr>
+          <tr><td>coconut</td><td>Extra</td><td>Rp. 40.000</td><td></td><td></td></tr>
+          <tr><td>Cream cheese</td><td>Extra</td><td>Rp. 40.000</td><td></td><td></td></tr>
+          <tr><td>Day of the food</td><td>Extra</td><td>Rp. 175.000</td><td></td><td></td></tr>
+          <tr><td>Doner beef</td><td>Kebab</td><td>Rp. 175.000</td><td></td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="bottom-info-bar">
+      To set stock limit for out of stock items in your POS during checkout, <a href="#view-settings-checkout">click here</a>
+    </div>
+  </main>
+
+  <!-- =================================================================== -->
+  <!-- 13. OTHER LIBRARY VIEWS                                             -->
+  <!-- =================================================================== -->
+  <main id="view-library-modifiers" class="page-view">
+    <div class="top-header"><h2 class="page-title">Modifiers</h2><button type="button" class="btn-primary">Create Modifier</button></div>
+    <div class="filter-bar"><div class="outlet-box"><span>demo acount</span></div><div class="search-pill"><span>Search</span><span>&#128269;</span></div></div>
+    <div class="empty-state"><h3>No Data To Display</h3><p>Learn more about Create Modifiers</p></div>
+  </main>
+
+  <main id="view-library-categories" class="page-view">
+    <div class="top-header"><h2 class="page-title">Categories</h2><button type="button" class="btn-primary">Create Category</button></div>
+    <div class="filter-bar"><div class="outlet-box"><span>demo acount</span></div><div class="search-pill"><span>Search</span><span>&#128269;</span></div></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Category Name</th><th class="r">Item Count</th></tr></thead>
+        <tbody>
+          <tr><td>Breakfast</td><td class="r">8</td></tr>
+          <tr><td>Coffe</td><td class="r">3</td></tr>
+          <tr><td>Dessert</td><td class="r">6</td></tr>
+          <tr><td>Drink</td><td class="r">15</td></tr>
+          <tr><td>Extra</td><td class="r">22</td></tr>
+          <tr><td>Kebab</td><td class="r">28</td></tr>
+          <tr><td>Mezze</td><td class="r">11</td></tr>
+          <tr><td>only sish</td><td class="r">9</td></tr>
+          <tr><td>Pide &amp; Gozleme</td><td class="r">8</td></tr>
+          <tr><td>Salad</td><td class="r">5</td></tr>
+          <tr><td>Smooties bowls</td><td class="r">3</td></tr>
+          <tr><td>Soup</td><td class="r">4</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <main id="view-library-bundle" class="page-view">
+    <div class="top-header"><h2 class="page-title">Bundle Package</h2><button type="button" class="btn-primary">Create Bundle</button></div>
+    <div class="empty-state"><h3>No Data To Display</h3></div>
+  </main>
+
+  <main id="view-library-promo" class="page-view">
+    <div class="top-header"><h2 class="page-title">Promo</h2><button type="button" class="btn-primary">Create Promo</button></div>
+    <div class="mode-tabs"><div class="mode-tab active">All Status</div><div class="mode-tab">Scheduled</div><div class="mode-tab">Ongoing</div><div class="mode-tab">Inactive</div></div>
+    <div class="empty-state"><h3>No Data To Display</h3></div>
+  </main>
+
+  <main id="view-library-discounts" class="page-view">
+    <div class="top-header"><h2 class="page-title">Discounts</h2><button type="button" class="btn-primary">Create Discount</button></div>
+    <div class="filter-bar"><div class="outlet-box"><span>All Outlets</span></div><div class="search-pill"><span>Search Discount</span><span>&#128269;</span></div></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Discount Name</th><th>Amount</th><th>Outlet</th></tr></thead>
+        <tbody><tr><td>Disc. Own</td><td>Custom (%)</td><td>demo acount</td></tr></tbody>
+      </table>
+    </div>
+  </main>
+
+  <main id="view-library-taxes" class="page-view">
+    <div class="top-header"><h2 class="page-title">Taxes</h2><button type="button" class="btn-primary">Create Tax</button></div>
+    <div class="filter-bar"><div class="outlet-box"><span>demo acount</span></div></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Name</th><th class="r">Amount</th></tr></thead>
+        <tbody><tr><td>Tax</td><td class="r">10%</td></tr></tbody>
+      </table>
+    </div>
+  </main>
+
+  <main id="view-library-gratuity" class="page-view">
+    <div class="top-header"><h2 class="page-title">Gratuity</h2><button type="button" class="btn-primary">Create Gratuity</button></div>
+    <div class="filter-bar"><div class="outlet-box"><span>demo acount</span></div></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Name</th><th class="r">Amount</th></tr></thead>
+        <tbody><tr><td>Service</td><td class="r">5%</td></tr></tbody>
+      </table>
+    </div>
+  </main>
+
+  <main id="view-library-salestype" class="page-view">
+    <div class="top-header"><h2 class="page-title">Sales Type</h2><button type="button" class="btn-primary">Create Sales Type</button></div>
+    <div class="empty-state"><h3>No Data To Display</h3><p>Learn more about Create Sales Type</p></div>
+  </main>
+
+  <main id="view-library-brands" class="page-view">
+    <div class="top-header"><h2 class="page-title">Brands</h2><button type="button" class="btn-primary">Create Brand</button></div>
+    <div class="empty-state"><h3>No Data To Display</h3></div>
+  </main>
+
+  <!-- =================================================================== -->
+  <!-- 14. INGREDIENT, INVENTORY, CUSTOMERS, EMPLOYEES, SETTINGS           -->
+  <!-- =================================================================== -->
+  <main id="view-ingredient" class="page-view">
+    <div class="top-header"><h2 class="page-title">Ingredient Inventory</h2></div>
+    <div class="settings-card">
+      <h3>Perpustakaan Bahan (Moka Pro / Enterprise)</h3>
+      <p style="line-height:1.6;color:#555;margin-bottom:16px">Monitor your ingredients effortlessly and manage your COGS properly. Optimize your profit with no more confusion in setting your selling price! To enable Ingredient Inventory, please upgrade your subscription by contacting Customer Service at 1500 970.</p>
+      <div style="display:flex;gap:12px">
+        <span class="btn-primary">Upgrade to Pro (Rp. 499.000)</span>
+        <span class="btn-outline">Upgrade to Enterprise (Rp. 799.000)</span>
+        <span class="btn-outline">Start Free Trial (Due 22 Nov 2026)</span>
+      </div>
+    </div>
+  </main>
+
+  <main id="view-inventory-summary" class="page-view">
+    <div class="top-header"><h2 class="page-title">Inventory Summary</h2><button type="button" class="btn-export">Export &#9662;</button></div>
+    <div class="filter-bar"><div class="outlet-box"><span>demo acount</span></div><div class="date-group"><button class="date-arrow left">&#10094;</button><button class="date-display">1/10/2026 - 31/10/2026 &#8964;</button><button class="date-arrow right">&#10095;</button></div></div>
+    <div class="empty-state"><h3>No Data To Display</h3></div>
+  </main>
+
+  <main id="view-inventory-suppliers" class="page-view">
+    <div class="top-header"><h2 class="page-title">Suppliers</h2><button type="button" class="btn-primary">Create Supplier</button></div>
+    <div class="empty-state"><h3>No Data To Display</h3></div>
+  </main>
+
+  <main id="view-inventory-po" class="page-view">
+    <div class="top-header"><h2 class="page-title">Purchase Order (PO)</h2><button type="button" class="btn-primary">Create PO</button></div>
+    <div class="empty-state"><h3>No Data To Display</h3></div>
+  </main>
+
+  <main id="view-inventory-transfer" class="page-view">
+    <div class="top-header"><h2 class="page-title">Transfer (Simple)</h2><button type="button" class="btn-primary">Create Transfer</button></div>
+    <div class="empty-state"><h3>No Data To Display</h3></div>
+  </main>
+
+  <main id="view-inventory-adjustment" class="page-view">
+    <div class="top-header"><h2 class="page-title">Adjustment</h2><button type="button" class="btn-primary">Create Adjustment</button></div>
+    <div class="empty-state"><h3>No Data To Display</h3></div>
+  </main>
+
+  <main id="view-online-channels" class="page-view">
+    <div class="top-header"><h2 class="page-title">Online Channels</h2></div>
+    <div class="empty-state"><h3>Moka Order &amp; GoFood Integration</h3><p>Manage your online store channels from one place.</p></div>
+  </main>
+
+  <main id="view-customers-list" class="page-view">
+    <div class="top-header"><h2 class="page-title">Customer List</h2><button type="button" class="btn-primary">Import / Export &#9662;</button></div>
+    <div class="filter-bar"><div class="search-pill"><span>Search Customer</span><span>&#128269;</span></div></div>
+    <div class="empty-state"><h3>No Data To Display</h3><p>Learn more about Import Your Existing Customer Database</p></div>
+  </main>
+
+  <main id="view-customers-feedback" class="page-view">
+    <div class="top-header"><h2 class="page-title">Feedback</h2></div>
+    <div class="filter-bar"><div class="outlet-box"><span>demo acount</span></div><div class="date-group"><button class="date-arrow left">&#10094;</button><button class="date-display">1/10/2026 - 31/10/2026 &#8964;</button><button class="date-arrow right">&#10095;</button></div></div>
+    <div class="kpi-grid" style="grid-template-columns:repeat(2,260px)">
+      <div class="kpi-card"><div class="kpi-label">GOOD FEEDBACKS</div><div class="kpi-value">0</div></div>
+      <div class="kpi-card"><div class="kpi-label">BAD FEEDBACKS</div><div class="kpi-value">0</div></div>
+    </div>
+    <div class="empty-state"><h3>No Data To Display</h3></div>
+  </main>
+
+  <main id="view-customers-loyalty" class="page-view">
+    <div class="top-header"><h2 class="page-title">Program Loyalitas</h2></div>
+    <div class="settings-card">
+      <h3>Turn Your Customer Into Loyalty Member</h3>
+      <p style="margin-bottom:16px;color:#555">Set up your Loyalty Program today and keep your customers coming back for repeat purchases! One Program for all outlets.</p>
+      <button type="button" class="btn-primary">TRY IT NOW</button>
+    </div>
+  </main>
+
+  <main id="view-employees-slots" class="page-view">
+    <div class="top-header"><h2 class="page-title">Employee Slots</h2><div class="header-actions"><button class="btn-outline">Export</button><button class="btn-primary">Add Employee Slot</button></div></div>
+    <div class="filter-bar"><div class="pill-select"><span>Active Employees</span><span>&#8964;</span></div><div class="search-pill"><span>Search</span><span>&#128269;</span></div></div>
+    <div class="empty-state"><h3>No Employee Slot Assigned</h3></div>
+  </main>
+
+  <main id="view-employees-access" class="page-view">
+    <div class="top-header"><h2 class="page-title">Employee Access</h2><button type="button" class="btn-primary">Create Employee Role</button></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Role Name</th><th>Employees Assigned</th><th>Access</th></tr></thead>
+        <tbody>
+          <tr><td>Administrator</td><td>-</td><td>App &amp; Back-office (22 Privileges)</td></tr>
+          <tr><td>Cashier</td><td>-</td><td>App Only (8 Privileges)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <main id="view-employees-pin" class="page-view">
+    <div class="top-header"><h2 class="page-title">PIN Access</h2></div>
+    <p class="report-desc">PIN Access is a feature to lock certain access in Moka Apps.</p>
+    <div class="settings-card">
+      <h3>LIST OF ADMINISTRATOR</h3>
+      <table>
+        <thead><tr><th>Outlet</th><th>Employee Name</th><th>PIN</th></tr></thead>
+        <tbody><tr><td>demo acount</td><td>-</td><td>-</td></tr></tbody>
+      </table>
+    </div>
+    <div class="settings-card">
+      <h3>LIST OF FEATURES</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13px">
+        <label><input type="checkbox" disabled> Print Bill</label>
+        <label><input type="checkbox" disabled> Manage All Open Bills</label>
+        <label><input type="checkbox" disabled> Apply Discounts to Bills and Items</label>
+        <label><input type="checkbox" disabled> Manage Discounts</label>
+        <label><input type="checkbox" disabled> Issue Refunds</label>
+        <label><input type="checkbox" disabled> Resend Receipts</label>
+        <label><input type="checkbox" disabled> Record Invoice Payments</label>
+        <label><input type="checkbox" disabled> Cancel Invoices</label>
+        <label><input type="checkbox" disabled> View Shift History</label>
+        <label><input type="checkbox" disabled> Edit Customer Information</label>
+        <label><input type="checkbox" disabled> View Activity</label>
+      </div>
+    </div>
+  </main>
+
+  <main id="view-customer-display" class="page-view">
+    <div class="top-header"><h2 class="page-title">Customer Display</h2></div>
+    <div class="empty-state"><h3>Customer Display Campaign &amp; Settings</h3></div>
+  </main>
+
+  <main id="view-table-management" class="page-view">
+    <div class="top-header"><h2 class="page-title">Table Management</h2></div>
+    <div class="empty-state"><h3>Table Group, Map &amp; Report</h3></div>
+  </main>
+
+  <main id="view-partner-solutions" class="page-view">
+    <div class="top-header"><h2 class="page-title">Partner Solutions</h2></div>
+    <div class="empty-state"><h3>Moka App Market</h3></div>
+  </main>
+
+  <main id="view-payments" class="page-view">
+    <div class="top-header"><h2 class="page-title">Payments (QRIS &amp; Configuration)</h2></div>
+    <div class="empty-state"><h3>Mobile Payment &amp; EDC Configuration</h3></div>
+  </main>
+
+  <!-- =================================================================== -->
+  <!-- 15. ACCOUNT SETTINGS VIEWS                                          -->
+  <!-- =================================================================== -->
+  <main id="view-settings-account" class="page-view">
+    <div class="top-header"><h2 class="page-title">Account Settings</h2></div>
+    <div class="settings-card">
+      <h3>USER ACCOUNT</h3>
+      <div class="field-grid">
+        <div class="field-label">Name</div><div class="field-val">Andi Pratama</div>
+        <div class="field-label">Phone</div><div class="field-val">08123456789 <span class="badge-verified">WhatsApp Verified</span></div>
+        <div class="field-label">Email</div><div class="field-val">demo.acount@gmail.com <span class="badge-verified">Verified</span></div>
+      </div>
+    </div>
+    <div class="settings-card">
+      <h3>BUSINESS INFO</h3>
+      <div class="field-grid">
+        <div class="field-label">Business Name</div><div class="field-val">demo acount</div>
+        <div class="field-label">Business Address</div><div class="field-val">Jl. Soekarno Hatta, Karangsono, Greenland, Jember</div>
+        <div class="field-label">Province</div><div class="field-val">Jawa Timur</div>
+        <div class="field-label">City / Kabupaten</div><div class="field-val">Jember</div>
+        <div class="field-label">Kecamatan</div><div class="field-val">Karangsono</div>
+        <div class="field-label">Postal Code</div><div class="field-val">68131</div>
+      </div>
+    </div>
+  </main>
+
+  <main id="view-settings-billing" class="page-view">
+    <div class="top-header"><h2 class="page-title">Billing</h2></div>
+    <div class="settings-card">
+      <h3>CURRENT SUBSCRIPTION PLAN: MOKA BASIC</h3>
+      <table>
+        <thead><tr><th>Outlet Name</th><th>Billing Cycle</th><th>Expiry Date</th></tr></thead>
+        <tbody><tr><td>demo acount</td><td>Yearly</td><td>14 Jul 2027</td></tr></tbody>
+      </table>
+    </div>
+    <div class="settings-card">
+      <h3>BILLING HISTORY</h3>
+      <table>
+        <thead><tr><th>Invoice Date</th><th>Invoice Number</th><th>Total Amount</th><th>Status</th></tr></thead>
+        <tbody><tr><td>30 Jun 2026</td><td>26063000000581</td><td>Rp 1.793.998</td><td><span class="badge-verified">PAID</span></td></tr></tbody>
+      </table>
+    </div>
+  </main>
+
+  <main id="view-settings-outlets" class="page-view">
+    <div class="top-header"><h2 class="page-title">Outlets</h2><button type="button" class="btn-primary">Add Outlet</button></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Outlet Name</th><th>Address</th><th>City</th><th>Phone</th></tr></thead>
+        <tbody><tr><td>demo acount</td><td>Jl. Soekarno Hatta, Karangsono, Greenland, Jember</td><td>Jember, Jawa Timur 68131</td><td>08123456789</td></tr></tbody>
+      </table>
+    </div>
+  </main>
+
+  <main id="view-settings-bank" class="page-view">
+    <div class="top-header"><h2 class="page-title">Bank Account</h2><button type="button" class="btn-primary">Add Bank</button></div>
+    <div class="empty-state"><h3>No Data To Display</h3><p>Add your bank account and activate mobile payment to join endless promo from our partner.</p></div>
+  </main>
+
+  <main id="view-settings-profile" class="page-view">
+    <div class="top-header"><h2 class="page-title">Public Profile</h2><button type="button" class="btn-primary">Save</button></div>
+    <div class="settings-card">
+      <h3>ACCOUNT PROFILE</h3>
+      <div class="field-grid">
+        <div class="field-label">Business Name</div><div><input class="form-input" type="text" value="demo acount" readonly></div>
+        <div class="field-label">Address</div><div><input class="form-input" type="text" value="Jl. Soekarno Hatta, Karangsono, Greenland, Jember" readonly></div>
+        <div class="field-label">City</div><div><input class="form-input" type="text" value="Jember" readonly></div>
+        <div class="field-label">Province</div><div><input class="form-input" type="text" value="Jawa Timur" readonly></div>
+        <div class="field-label">Zipcode</div><div><input class="form-input" type="text" value="68131" readonly></div>
+        <div class="field-label">Phone</div><div><input class="form-input" type="text" value="08123456789" readonly></div>
+        <div class="field-label">Email</div><div><input class="form-input" type="text" value="demo.acount@gmail.com" readonly></div>
+      </div>
+    </div>
+  </main>
+
+  <main id="view-settings-receipt" class="page-view">
+    <div class="top-header"><h2 class="page-title">Receipt</h2><button type="button" class="btn-primary">Save</button></div>
+    <div class="settings-card">
+      <h3>RECEIPT PREVIEW (demo acount)</h3>
+      <div style="max-width:340px;border:1px dashed #ccc;padding:18px;font-family:monospace;font-size:12px;line-height:1.6">
+        <div style="text-align:center;font-weight:700;font-size:14px">demo acount</div>
+        <div style="text-align:center;margin-bottom:10px">Jl. Soekarno Hatta, Karangsono, Greenland, Jember<br>Telp: 08123456789<br>08 Nov 2026 13:22 | Receipt: QGKTER5</div>
+        <hr style="border:none;border-top:1px dashed #ccc;margin:8px 0">
+        <div>Milk Tea x1 <span style="float:right">Rp. 25.000</span></div>
+        <div>Nasi Goreng x1 <span style="float:right">Rp. 25.000</span></div>
+        <div>Beef Wellington x1 <span style="float:right">Rp. 50.000</span></div>
+        <hr style="border:none;border-top:1px dashed #ccc;margin:8px 0">
+        <div>Subtotal <span style="float:right">Rp. 110.000</span></div>
+        <div>Gratuity (5%) <span style="float:right">Rp. 10.000</span></div>
+        <div>Tax (10%) <span style="float:right">Rp. 10.000</span></div>
+        <div style="font-weight:700">Total <span style="float:right">Rp. 110.000</span></div>
+      </div>
+    </div>
+  </main>
+
+  <main id="view-settings-checkout" class="page-view">
+    <div class="top-header"><h2 class="page-title">Checkout Settings</h2><button type="button" class="btn-primary">Save</button></div>
+    <div class="settings-card">
+      <h3>TAX, GRATUITY, SHIFT &amp; OTHER SETTINGS</h3>
+      <div class="field-grid">
+        <div class="field-label">Enable Tax</div><div><div class="toggle-pill"><span class="on">ON</span><span>OFF</span></div></div>
+        <div class="field-label">Enable Gratuity</div><div><div class="toggle-pill"><span class="on">ON</span><span>OFF</span></div></div>
+        <div class="field-label">Enable Rounding</div><div><div class="toggle-pill"><span>ON</span><span class="on">OFF</span></div></div>
+        <div class="field-label">Start Shift Automatically</div><div><div class="toggle-pill"><span class="on">ON</span><span>OFF</span></div></div>
+        <div class="field-label">Enable Stock Limit</div><div><div class="toggle-pill"><span>ON</span><span class="on">OFF</span></div></div>
+        <div class="field-label">Track Server</div><div><div class="toggle-pill"><span>ON</span><span class="on">OFF</span></div></div>
+        <div class="field-label">Split Payment</div><div><div class="toggle-pill"><span class="on">ON</span><span>OFF</span></div></div>
+        <div class="field-label">Save Bill and Print Bill</div><div><div class="toggle-pill"><span class="on">ON</span><span>OFF</span></div></div>
+      </div>
+    </div>
+  </main>
+
+  <main id="view-gopay-setup" class="page-view">
+    <div class="top-header"><h2 class="page-title">GoPay Bio - Setup</h2></div>
+    <div class="empty-state"><h3>GoPay Bio Setup</h3><p>Create your bio link for demo acount.</p></div>
+  </main>
+
+  <main id="view-gopay-analytics" class="page-view">
+    <div class="top-header"><h2 class="page-title">GoPay Bio - Analytics</h2></div>
+    <div class="empty-state"><h3>GoPay Bio Analytics</h3></div>
+  </main>
+
+</div>
+</body>
+</html>
